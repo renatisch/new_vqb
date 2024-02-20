@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  api:
+    build: ./backend
+    image: api
+    container_name: api
+    command: ["uvicorn", "app:app", "--reload", "--host", "0.0.0.0"]
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend:/api
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY2}
+
+  vqb:
+    depends_on:
+      - api
+    build: ./vqb
+    image: vqb
+    container_name: vqb
+    command: ["npm", "start"]
+    ports:
+      - 3000:3000
+    volumes:
+      - ./vqb:/vqb
