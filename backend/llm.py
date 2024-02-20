@@ -12,9 +12,9 @@ from tools.list_objects_tool import list_objects_tool
 from tools.get_object_tool import get_object_tool
 from tools.describe_query_tool import describe_query_tool
 from tools.left_join_query_tool import left_join_query_tool
+from tools.select_query_tool import select_query_tool
 from langchain_core.pydantic_v1 import BaseModel, Field
 from typing import Dict
-from langchain_core.output_parsers import JsonOutputParser
 from langchain.output_parsers.pydantic import PydanticOutputParser
 
 
@@ -30,6 +30,7 @@ def initial_queries_assistant(technology: str, input: str):
         get_object_tool,
         describe_query_tool,
         left_join_query_tool,
+        select_query_tool,
     ]
     ChatStartHandler = ChatModelStartHandler()
     human_prompt = input.replace("format_instructions", response_format)
