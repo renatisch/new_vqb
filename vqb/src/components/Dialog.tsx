@@ -14,12 +14,111 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 import QueryBuilderChart from "./vqb/QueryBuilderChart";
 import SqlEditorView from "./sqlEditor/SqlEditor";
+import { Node, Edge } from "reactflow";
+import { Query, Table } from "./types";
+import axios from "axios";
+import { format } from "sql-formatter";
+
+const instance = axios.create({
+  baseURL: "http://localhost:8000/",
+  timeout: 20000,
+  headers: { "Content-Type": "application/json", Accept: "application/json" },
+});
 
 export default function QueryBuilderDialog() {
   const [editorQuery, setEditorQuery] = useState("");
   const [queryLoading, setQueryLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(true);
   const [dialogView, setDialogView] = useState("vqb");
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+  const [query, setQuery] = useState<Query>({
+    primaryDatabase: "",
+    primarySchema: "",
+    primaryTable: "",
+    primaryColumn: "",
+    secondaryDatabase: "",
+    secondarySchema: "",
+    secondaryTable: "",
+    secondaryColumn: "",
+    action: "",
+  });
+  const [tables, setTables] = useState<Table[]>([
+    {
+      database: "",
+      schema: "",
+      tableName: "",
+      columns: [],
+    },
+  ]);
+
+  const formatTable = (table: Table) => {
+    let columns = table.columns?.filter((column) => {
+      return column.selected;
+    });
+    let selectedColumns = columns?.map((column) => {
+      return column.name;
+    });
+    return {
+      technology: "Snowflake",
+      database: table.database,
+      table_schema: table.schema,
+      table: table.tableName,
+      columns: selectedColumns,
+    };
+  };
+  const generateQuery = (queryObject: Query) => {
+    let technology = "Snowflake";
+    if (queryObject.action.length > 0) {
+      let payload = {
+        technology: technology,
+        join_type: "left",
+        databases: [queryObject.primaryDatabase, queryObject.secondaryDatabase],
+        schemas: [queryObject.primarySchema, queryObject.secondarySchema],
+        tables: [queryObject.primaryTable, queryObject.secondaryTable],
+        left_table_column: queryObject.primaryColumn,
+        right_table_column: queryObject.secondaryColumn,
+      };
+      instance
+        .post("/queries/join", payload)
+        .then((response) => {
+          const formattedQuery = format(response.data["queries"]["query"], {
+            language: "snowflake",
+            keywordCase: "upper",
+          });
+          setEditorQuery(formattedQuery);
+          setQueryLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      let payload = formatTable(tables[0]);
+      instance
+        .post("/queries/select", payload)
+        .then((response) => {
+          const formattedQuery = format(response.data["query"], {
+            language: "snowflake",
+            keywordCase: "upper",
+          });
+          setEditorQuery(formattedQuery);
+          setQueryLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const switchToSQLEditor = () => {
+    generateQuery(query);
+    setDialogView("sql_editor");
+  };
+  const switchToVQB = () => {
+    setDialogView("vqb");
+    setQueryLoading(true);
+    setEditorQuery("");
+  };
 
   return (
     <Dialog
@@ -71,9 +170,7 @@ export default function QueryBuilderDialog() {
                 type="button"
                 value="Visual Query Builder"
                 onClick={() => {
-                  setDialogView("vqb");
-                  setQueryLoading(true);
-                  setEditorQuery("");
+                  switchToVQB();
                 }}
               />
               <input
@@ -88,16 +185,31 @@ export default function QueryBuilderDialog() {
                 type="button"
                 value="SQL Editor"
                 onClick={() => {
-                  setDialogView("sql_editor");
+                  switchToSQLEditor();
                 }}
               />
             </Box>
           </Grid>
           <Grid item xs={12}>
             {dialogView === "vqb" ? (
-              <QueryBuilderChart />
+              <QueryBuilderChart
+                nodes={nodes}
+                edges={edges}
+                setNodes={setNodes}
+                setEdges={setEdges}
+                editorQuery={editorQuery}
+                setEditorQuery={setEditorQuery}
+                queryLoading={queryLoading}
+                setQueryLoading={setQueryLoading}
+                query={query}
+                setQuery={setQuery}
+                tables={tables}
+                setTables={setTables}
+              />
             ) : (
               <SqlEditorView
+                queryLoading={queryLoading}
+                setQueryLoading={setQueryLoading}
                 editorQuery={editorQuery}
                 setEditorQuery={setEditorQuery}
               />

@@ -50,20 +50,23 @@ type apiResponse = {
 
 const instance = axios.create({
   baseURL: "http://localhost:8000/",
-  timeout: 5000,
+  timeout: 20000,
   headers: { "Content-Type": "application/json", Accept: "application/json" },
 });
 
 type SqlEditorProps = {
   editorQuery: string;
   setEditorQuery: React.Dispatch<React.SetStateAction<string>>;
+  queryLoading: boolean;
+  setQueryLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function SqlEditorView({
   editorQuery,
   setEditorQuery,
+  queryLoading,
+  setQueryLoading,
 }: SqlEditorProps) {
-  //   const [query, setQuery] = useState("");
   const [error, setError] = useState(false);
   const [errorType, setErrorType] = useState("");
   const [loading, setLoading] = useState(false);
@@ -89,11 +92,36 @@ export default function SqlEditorView({
 
   const handleExplain = () => {};
 
-  const handleValidate = () => {};
+  const handleValidate = () => {
+    let payload = {
+      technology: "Snowflake",
+      query: editorQuery,
+    };
+    instance
+      .post("/queries/validate", payload)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.is_query_valid === "valid") {
+          setError(false);
+          setHelperText("");
+        } else if (response.data.is_query_valid === "invalid") {
+          setError(true);
+          setHelperText(response.data.description);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <Box padding={2} paddingLeft={0} display={"flex"} flexDirection={"column"}>
-      <SqlEditor query={editorQuery} setQuery={setEditorQuery} />
+      <SqlEditor
+        query={editorQuery}
+        setQuery={setEditorQuery}
+        queryLoading={queryLoading}
+        setQueryLoading={setQueryLoading}
+      />
       <Box
         height={20}
         marginTop={1}
@@ -123,7 +151,20 @@ export default function SqlEditorView({
           })}
         </ButtonGroup>
       </Box>
-      {error && errorType === "emptyQuery" ? (
+      {!error && helperText.length < 1 ? (
+        <Box height={112}>
+          <Alert severity="success" sx={{ margin: 1, padding: 1 }}>
+            <Typography marginLeft={1}>Valid query</Typography>
+          </Alert>
+        </Box>
+      ) : error ? (
+        <Alert severity="error" sx={{ margin: 1, padding: 1 }}>
+          <Typography marginLeft={1}>Invalid query. {helperText}</Typography>
+        </Alert>
+      ) : (
+        <></>
+      )}
+      {/* {error && errorType === "emptyQuery" ? (
         <Box height={112}>
           <Alert severity="warning" sx={{ margin: 1, padding: 1 }}>
             <Typography marginLeft={1}>{helperText}</Typography>
@@ -169,7 +210,7 @@ export default function SqlEditorView({
         </Box>
       ) : (
         <Box height={112}></Box>
-      )}
+      )} */}
       <Box display={"flex"} flexDirection={"column"} marginTop={0.5}>
         <Typography fontSize={15} fontWeight={550} marginBottom={1}>
           Query suggestions:

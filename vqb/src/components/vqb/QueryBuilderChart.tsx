@@ -14,13 +14,8 @@ import ReactFlow, {
   DefaultEdgeOptions,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import {
-  useState,
-  useEffect,
-  useCallback,
-  useContext,
-  createContext,
-} from "react";
+import { useEffect, useCallback, useContext, createContext } from "react";
+import React from "react";
 import { Table, Query, QueryBuilderContextProps } from "../types";
 import DbNode from "./components/DbNode";
 import CustomEdge from "./components/CustomEdge";
@@ -74,32 +69,36 @@ const styles = {
   height: "100%",
 };
 
-function QueryBuilderChart() {
-  const [tables, setTables] = useState<Table[]>([
-    {
-      database: "",
-      schema: "",
-      tableName: "",
-      columns: [],
-    },
-  ]);
+type QueryBuilderChartProps = {
+  nodes: Node[];
+  setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+  edges: Edge[];
+  setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
+  editorQuery: string;
+  setEditorQuery: React.Dispatch<React.SetStateAction<string>>;
+  queryLoading: boolean;
+  setQueryLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  query: Query;
+  setQuery: React.Dispatch<React.SetStateAction<Query>>;
+  tables: Table[];
+  setTables: React.Dispatch<React.SetStateAction<Table[]>>;
+};
 
-  const [query, setQuery] = useState<Query>({
-    primaryDatabase: "",
-    primarySchema: "",
-    primaryTable: "",
-    primaryColumn: "",
-    secondaryDatabase: "",
-    secondarySchema: "",
-    secondaryTable: "",
-    secondaryColumn: "",
-    action: "",
-  });
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
-  const [action, setAction] = useState("");
-  const [editorQuery, setEditorQuery] = useState("");
-  const [queryLoading, setQueryLoading] = useState(true);
+function QueryBuilderChart({
+  nodes,
+  setNodes,
+  edges,
+  setEdges,
+  editorQuery,
+  setEditorQuery,
+  queryLoading,
+  setQueryLoading,
+  query,
+  setQuery,
+  tables,
+  setTables,
+}: QueryBuilderChartProps) {
+  const [action, setAction] = React.useState("");
 
   const getNode = (table: Table, index: number) => {
     return {

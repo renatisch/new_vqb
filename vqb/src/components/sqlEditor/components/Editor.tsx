@@ -4,12 +4,15 @@ import { sql } from "@codemirror/lang-sql";
 import { SQLConfig, StandardSQL } from "@codemirror/lang-sql";
 import { format } from "sql-formatter";
 import { Box } from "@mui/material";
+import LoaderOverlay from "./LoadingOverlay";
 
 interface SqlEditorProps {
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
+  queryLoading: boolean;
+  setQueryLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
-function SqlEditor({ query, setQuery }: SqlEditorProps) {
+function SqlEditor({ query, setQuery, queryLoading }: SqlEditorProps) {
   const onChange = React.useCallback((val: any) => {
     const formattedQuery = format(val, {
       language: "snowflake",
@@ -25,6 +28,7 @@ function SqlEditor({ query, setQuery }: SqlEditorProps) {
 
   return (
     <Box padding={0}>
+      {queryLoading && <LoaderOverlay />}
       <CodeMirror
         value={query}
         height="300px"
