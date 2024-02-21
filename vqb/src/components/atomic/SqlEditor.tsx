@@ -1,19 +1,21 @@
-import React from "react";
+import { Dispatch, FC, SetStateAction, useCallback } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
 import { SQLConfig, StandardSQL } from "@codemirror/lang-sql";
 import { format } from "sql-formatter";
 import { Box } from "@mui/material";
-import LoaderOverlay from "./LoadingOverlay";
+
+import { LoaderOverlay } from "./LoadingOverlay";
 
 interface SqlEditorProps {
   query: string;
-  setQuery: React.Dispatch<React.SetStateAction<string>>;
+  setQuery: Dispatch<SetStateAction<string>>;
   queryLoading: boolean;
-  setQueryLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setQueryLoading: Dispatch<SetStateAction<boolean>>;
 }
-function SqlEditor({ query, setQuery, queryLoading }: SqlEditorProps) {
-  const onChange = React.useCallback((val: any) => {
+
+export const SqlEditor: FC<SqlEditorProps> = ({ query, setQuery, queryLoading }) => {
+  const onChange = useCallback((val: any) => {
     // const formattedQuery = format(val, {
     //   language: "snowflake",
     //   keywordCase: "upper",
@@ -49,5 +51,3 @@ function SqlEditor({ query, setQuery, queryLoading }: SqlEditorProps) {
     </Box>
   );
 }
-
-export default SqlEditor;

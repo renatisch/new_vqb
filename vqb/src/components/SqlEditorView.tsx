@@ -1,72 +1,33 @@
-import {
-  Box,
-  Checkbox,
-  Typography,
-  Button,
-  IconButton,
-  Stack,
-  Tooltip,
-  Chip,
-  ButtonGroup,
-  Alert,
-} from "@mui/material";
-
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { format } from "sql-formatter";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
 import LoopOutlinedIcon from "@mui/icons-material/LoopOutlined";
-import SqlEditor from "./components/Editor";
-import { format } from "sql-formatter";
 import WbIncandescentOutlinedIcon from "@mui/icons-material/WbIncandescentOutlined";
-import { useContext } from "react";
+import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
+import Chip from '@mui/material/Chip';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Alert from '@mui/material/Alert';
 
-const queryExamples = [
-  {
-    query: "SELECT * FROM ACME_ORG.MARKETING.department_table;",
-  },
-  {
-    query: 'SELECT * FROM "DATA"."Schema"."Upload" WHERE "data" > 0;',
-  },
-  {
-    query:
-      "SELECT * FROM alteryx.staff.product_department JOIN alteryx.staff.offices ON location = location WHERE alteryx.staff.product_department.location = 'Prague';",
-  },
-];
-
-type ValidateApiResponse = {
-  is_query_valid: string;
-  valid_query: string;
-};
-
-type apiResponse = {
-  data_source: string;
-  is_query_correct: string;
-  initial_query: string;
-  validated_query: string;
-  query_description: string;
-};
-
-const instance = axios.create({
-  baseURL: "http://localhost:8000/",
-  timeout: 20000,
-  headers: { "Content-Type": "application/json", Accept: "application/json" },
-});
+import { queryExamples } from "../constants/querySamples";
+import { SqlEditor } from "./atomic/SqlEditor";
+import { instance } from "../logic";
 
 type SqlEditorProps = {
   editorQuery: string;
-  setEditorQuery: React.Dispatch<React.SetStateAction<string>>;
+  setEditorQuery: Dispatch<SetStateAction<string>>;
   queryLoading: boolean;
-  setQueryLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setQueryLoading: Dispatch<SetStateAction<boolean>>;
 };
 
-export default function SqlEditorView({
-  editorQuery,
-  setEditorQuery,
-  queryLoading,
-  setQueryLoading,
-}: SqlEditorProps) {
+export const SqlEditorView: FC<SqlEditorProps> = ({ editorQuery, setEditorQuery, queryLoading, setQueryLoading }) => {
   const [error, setError] = useState(false);
   const [errorType, setErrorType] = useState("");
   const [loading, setLoading] = useState(false);

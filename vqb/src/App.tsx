@@ -1,12 +1,11 @@
-import React from "react";
-import QueryBuilderDialog from "./components/Dialog";
+import { FC } from "react";
 
-function App() {
+import { QueryBuilderDialog } from "./components/Dialog";
+
+export const App: FC = () => {
   return (
     <div className="App">
       <QueryBuilderDialog />
     </div>
   );
 }
-
-export default App;

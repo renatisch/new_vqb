@@ -1,32 +1,26 @@
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  getStraightPath,
-  EdgeProps,
-} from "reactflow";
+import { FC, useContext } from "react";
+
+import { BaseEdge, EdgeLabelRenderer, getStraightPath } from "reactflow";
+
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { useState, useContext } from "react";
-import { QueryBuilderContext } from "../QueryBuilderChart";
 
-export default function CustomEdge({
-  id,
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-}: EdgeProps) {
-  const [edgePath, labelX, labelY] = getStraightPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-  });
+import { QueryBuilderContext } from "../../contexts/queryBuilderContext";
 
-  const { query, setQuery, action, setAction } =
-    useContext(QueryBuilderContext);
+type CustomEdgeProps = {
+  id: string;
+  sourceX: number;
+  sourceY: number;
+  targetX: number;
+  targetY: number;
+}
+
+export const CustomEdge: FC<CustomEdgeProps> = ({ id, sourceX, sourceY, targetX, targetY }) => {
+  const [edgePath, labelX, labelY] = getStraightPath({ sourceX, sourceY, targetX, targetY });
+
+  const { query, setQuery, action, setAction } = useContext(QueryBuilderContext);
   const handleChange = (event: SelectChangeEvent) => {
     setQuery({ ...query, action: event.target.value });
     setAction(event.target.value);

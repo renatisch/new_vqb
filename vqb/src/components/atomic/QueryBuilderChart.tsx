@@ -1,53 +1,14 @@
-import ReactFlow, {
-  applyEdgeChanges,
-  applyNodeChanges,
-  OnNodesChange,
-  OnEdgesChange,
-  Node,
-  Edge,
-  addEdge,
-  getIncomers,
-  getConnectedEdges,
-  getOutgoers,
-  NodeTypes,
-  FitViewOptions,
-  DefaultEdgeOptions,
-} from "reactflow";
-import "reactflow/dist/style.css";
-import { useEffect, useCallback, useContext, createContext } from "react";
-import React from "react";
-import { Table, Query, QueryBuilderContextProps } from "../types";
-import DbNode from "./components/DbNode";
-import CustomEdge from "./components/CustomEdge";
+import ReactFlow, { applyEdgeChanges, applyNodeChanges, OnNodesChange, OnEdgesChange, Node, Edge, addEdge, getIncomers, getConnectedEdges, getOutgoers, NodeTypes, FitViewOptions, DefaultEdgeOptions } from "reactflow";
 import { Grid, Box } from "@mui/material";
-import SchemaLister from "./components/schemaLister/SchemaLister";
+import { FC, Dispatch, SetStateAction, useState, useEffect, useCallback } from "react";
 
-export const QueryBuilderContext = createContext<QueryBuilderContextProps>({
-  nodes: [],
-  setNodes: () => {},
-  edges: [],
-  setEdges: () => {},
-  action: "",
-  setAction: () => {},
-  tables: [{ database: "", schema: "", tableName: "", columns: [] }],
-  setTables: () => {},
-  query: {
-    primaryDatabase: "",
-    primarySchema: "",
-    primaryTable: "",
-    primaryColumn: "",
-    secondaryDatabase: "",
-    secondarySchema: "",
-    secondaryTable: "",
-    secondaryColumn: "",
-    action: "",
-  },
-  setQuery: () => {},
-  queryLoading: false,
-  setQueryLoading: () => {},
-  editorQuery: "",
-  setEditorQuery: () => {},
-});
+import { Table, Query } from "../../types/types";
+import { QueryBuilderContext } from "../../contexts/queryBuilderContext";
+import { DbNode } from "./DbNode";
+import { CustomEdge }  from "./CustomEdge";
+import { SchemaLister } from "./SchemaLister";
+
+import "reactflow/dist/style.css";
 
 const nodeTypes: NodeTypes = {
   dbNode: DbNode,
@@ -71,34 +32,21 @@ const styles = {
 
 type QueryBuilderChartProps = {
   nodes: Node[];
-  setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+  setNodes: Dispatch<SetStateAction<Node[]>>;
   edges: Edge[];
-  setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
+  setEdges: Dispatch<SetStateAction<Edge[]>>;
   editorQuery: string;
-  setEditorQuery: React.Dispatch<React.SetStateAction<string>>;
+  setEditorQuery: Dispatch<SetStateAction<string>>;
   queryLoading: boolean;
-  setQueryLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setQueryLoading: Dispatch<SetStateAction<boolean>>;
   query: Query;
-  setQuery: React.Dispatch<React.SetStateAction<Query>>;
+  setQuery: Dispatch<SetStateAction<Query>>;
   tables: Table[];
-  setTables: React.Dispatch<React.SetStateAction<Table[]>>;
+  setTables: Dispatch<SetStateAction<Table[]>>;
 };
 
-function QueryBuilderChart({
-  nodes,
-  setNodes,
-  edges,
-  setEdges,
-  editorQuery,
-  setEditorQuery,
-  queryLoading,
-  setQueryLoading,
-  query,
-  setQuery,
-  tables,
-  setTables,
-}: QueryBuilderChartProps) {
-  const [action, setAction] = React.useState("");
+export const QueryBuilderChart: FC<QueryBuilderChartProps> = ({ nodes, setNodes, edges, setEdges, editorQuery, setEditorQuery, queryLoading, setQueryLoading, query, setQuery, tables, setTables }) => {
+  const [action, setAction] = useState("");
 
   const getNode = (table: Table, index: number) => {
     return {
@@ -259,5 +207,3 @@ function QueryBuilderChart({
     </QueryBuilderContext.Provider>
   );
 }
-
-export default QueryBuilderChart;

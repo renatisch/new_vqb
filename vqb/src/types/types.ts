@@ -1,4 +1,14 @@
+import { Dispatch, SetStateAction } from "react";
 import { Node, Edge } from "reactflow";
+
+export type Column = {
+  id: string;
+  objectType: "column";
+  name: string;
+  dataType: "integer";
+  selected: boolean;
+}
+
 export type TreeProps = {
   id: string;
   name: string;
@@ -15,27 +25,27 @@ export type handleSelectTableProps = {
 };
 
 export type Table = {
-  database: string | undefined;
-  schema: string | undefined;
+  database?: string;
+  schema?: string;
   tableName: string;
-  columns: [] | TreeProps[] | undefined;
+  columns?: TreeProps[];
   expanded?: boolean;
 };
 export type ChartTable = {
   database: string;
   schema: string;
   tableName: string;
-  columns: [];
+  columns: Column[];
   handleType: string;
   expanded?: boolean;
 };
 
 export type SelectQuery = {
   type: string;
-  database: string | undefined;
-  schema: string | undefined;
-  table: string | undefined;
-  columns?: [] | TreeProps[];
+  database?: string;
+  schema?: string;
+  table?: string;
+  columns?: TreeProps[];
 };
 
 export type Query = {
@@ -50,21 +60,21 @@ export type Query = {
   action: string;
 };
 
-export type QueryBuilderContextProps = {
+export type QueryDialogContextProps = {
   editorQuery: string;
-  setEditorQuery: React.Dispatch<React.SetStateAction<string>>;
+  setEditorQuery: Dispatch<SetStateAction<string>>;
   nodes: Node[];
-  setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+  setNodes: Dispatch<SetStateAction<Node[]>>;
   edges: Edge[];
   action: string;
-  setAction: React.Dispatch<React.SetStateAction<string>>;
-  setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
+  setAction: Dispatch<SetStateAction<string>>;
+  setEdges: Dispatch<SetStateAction<Edge[]>>;
   tables: Table[];
-  setTables: React.Dispatch<React.SetStateAction<Table[]>>;
+  setTables: Dispatch<SetStateAction<Table[]>>;
   query: Query;
-  setQuery: React.Dispatch<React.SetStateAction<Query>>;
+  setQuery: Dispatch<SetStateAction<Query>>;
   queryLoading: boolean;
-  setQueryLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setQueryLoading: Dispatch<SetStateAction<boolean>>;
 };
 
 export type FullyQualifiedTableName = {
@@ -75,9 +85,9 @@ export type FullyQualifiedTableName = {
 };
 
 export type FullTableName = {
-  database: string | undefined;
-  schema: string | undefined;
+  database?: string;
+  schema?: string;
   tableName: string;
-  columns: [] | TreeProps[] | undefined;
+  columns?: TreeProps[];
   expanded?: boolean;
 };

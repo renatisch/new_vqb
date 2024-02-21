@@ -1,31 +1,17 @@
-import {
-  Dialog,
-  Paper,
-  Box,
-  Typography,
-  Grid,
-  Button,
-  IconButton,
-  Checkbox,
-} from "@mui/material";
+import { FC, useState } from "react";
+import { Node, Edge } from "reactflow";
+import { format } from "sql-formatter";
+import { Dialog, Paper, Box, Typography, Grid, Button, IconButton, Checkbox } from "@mui/material";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import WebAssetIcon from "@mui/icons-material/WebAsset";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react";
-import QueryBuilderChart from "./vqb/QueryBuilderChart";
-import SqlEditorView from "./sqlEditor/SqlEditor";
-import { Node, Edge } from "reactflow";
-import { Query, Table } from "./types";
-import axios from "axios";
-import { format } from "sql-formatter";
 
-const instance = axios.create({
-  baseURL: "http://localhost:8000/",
-  timeout: 20000,
-  headers: { "Content-Type": "application/json", Accept: "application/json" },
-});
+import { Query, Table } from "../types/types";
+import { instance } from "../logic";
+import { QueryBuilderChart } from "./atomic/QueryBuilderChart";
+import { SqlEditorView } from "./SqlEditorView";
 
-export default function QueryBuilderDialog() {
+export const QueryBuilderDialog: FC = () => {
   const [editorQuery, setEditorQuery] = useState("");
   const [queryLoading, setQueryLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(true);
