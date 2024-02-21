@@ -82,11 +82,13 @@ export default function QueryBuilderDialog() {
       instance
         .post("/queries/join", payload)
         .then((response) => {
-          const formattedQuery = format(response.data["queries"]["query"], {
-            language: "snowflake",
-            keywordCase: "upper",
-          });
-          setEditorQuery(formattedQuery);
+          console.log(response);
+          let recievedQuery = response.data["queries"]["query"];
+          // const formattedQuery = format(response.data["queries"]["query"], {
+          //   language: "snowflake",
+          //   keywordCase: "upper",
+          // });
+          setEditorQuery(recievedQuery);
           setQueryLoading(false);
         })
         .catch((error) => {
@@ -97,11 +99,13 @@ export default function QueryBuilderDialog() {
       instance
         .post("/queries/select", payload)
         .then((response) => {
-          const formattedQuery = format(response.data["query"], {
-            language: "snowflake",
-            keywordCase: "upper",
-          });
-          setEditorQuery(formattedQuery);
+          console.log(response);
+          let recievedQuery = response.data["query"];
+          // const formattedQuery = format(response.data["query"], {
+          //   language: "snowflake",
+          //   keywordCase: "upper",
+          // });
+          setEditorQuery(recievedQuery);
           setQueryLoading(false);
         })
         .catch((error) => {
@@ -111,8 +115,14 @@ export default function QueryBuilderDialog() {
   };
 
   const switchToSQLEditor = () => {
-    generateQuery(query);
-    setDialogView("sql_editor");
+    if (tables.length < 1) {
+      setDialogView("sql_editor");
+      setQueryLoading(false);
+    } else {
+      console.log("run");
+      generateQuery(query);
+      setDialogView("sql_editor");
+    }
   };
   const switchToVQB = () => {
     setDialogView("vqb");

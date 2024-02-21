@@ -5,13 +5,22 @@ services:
     build: ./backend
     image: api
     container_name: api
-    command: ["uvicorn", "app:app", "--reload", "--host", "0.0.0.0"]
+    command:
+      [
+        "uvicorn",
+        "app:app",
+        "--reload",
+        "--reload-include",
+        "*",
+        "--host",
+        "0.0.0.0",
+      ]
     ports:
       - 8000:8000
     volumes:
       - ./backend:/api
     environment:
-      OPENAI_API_KEY: ${OPENAI_API_KEY2}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
 
   vqb:
     depends_on:

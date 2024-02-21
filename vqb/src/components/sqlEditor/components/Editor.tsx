@@ -14,11 +14,11 @@ interface SqlEditorProps {
 }
 function SqlEditor({ query, setQuery, queryLoading }: SqlEditorProps) {
   const onChange = React.useCallback((val: any) => {
-    const formattedQuery = format(val, {
-      language: "snowflake",
-      keywordCase: "upper",
-    });
-    setQuery(formattedQuery);
+    // const formattedQuery = format(val, {
+    //   language: "snowflake",
+    //   keywordCase: "upper",
+    // });
+    setQuery(val);
   }, []);
 
   const config: SQLConfig = {

@@ -6,8 +6,8 @@ from tools.select_query_tool import select_query
 from tools.validate_query_tool import validate_query
 from fastapi.middleware.cors import CORSMiddleware
 
+load_dotenv(verbose=True, override=True)
 
-load_dotenv()
 app = FastAPI()
 origins = [
     "http://localhost:3000",
