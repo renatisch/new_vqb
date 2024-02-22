@@ -27,7 +27,7 @@ export const ListerTreeItem = component<ListerTreeItemProps>(({ children, object
   }
   
   return (
-    <SchemaListerTreeItem key={id} nodeId={id} labelText={name} labelIcon={
+    <SchemaListerTreeItem nodeId={id} labelText={name} labelIcon={
         objectType === "database" ? (
           <FaDatabase />
         ) : objectType === "schema" ? (

@@ -1,6 +1,19 @@
+// Payloads
+export type QueryPayload = {
+  technology: string;
+  query: string;
+}
+
+
+
+// Responses
 export type ValidateApiResponse = {
-  is_query_valid: string;
-  valid_query: string;
+  is_query_valid: 'valid';
+  description: string;
+};
+
+export type ExplainApiResponse = {
+  query_description: 'string';
 };
 
 export type ApiResponse = {

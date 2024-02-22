@@ -3,28 +3,18 @@ import CodeMirror from "@uiw/react-codemirror";
 import Box from "@mui/material/Box";
 import { sql } from "@codemirror/lang-sql";
 import { StandardSQL } from "@codemirror/lang-sql";
-import { format } from "sql-formatter";
 
 import { component } from "../../framework";
 import { LoaderOverlay } from "./LoadingOverlay";
 
 interface SqlEditorProps {
+  queryLoading: boolean;
   query: string;
   setQuery: Dispatch<SetStateAction<string>>;
-  queryLoading: boolean;
-  setQueryLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-export const SqlEditor = component<SqlEditorProps>(({ query, setQuery, queryLoading }) => {
+export const SqlEditor = component<SqlEditorProps>(({ queryLoading, query, setQuery }) => {
   const extensions = [sql({ dialect: StandardSQL, upperCaseKeywords: true })];
-
-  const onChange = useCallback((val: any) => {
-    // const formattedQuery = format(val, {
-    //   language: "snowflake",
-    //   keywordCase: "upper",
-    // });
-    setQuery(val);
-  }, []);
 
   return (
     <Box padding={0}>
@@ -33,7 +23,7 @@ export const SqlEditor = component<SqlEditorProps>(({ query, setQuery, queryLoad
         value={query}
         height="300px"
         extensions={extensions}
-        onChange={onChange}
+        onChange={setQuery}
         basicSetup={{
           lineNumbers: false,
           foldGutter: false,

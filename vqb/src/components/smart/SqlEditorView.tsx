@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { format } from "sql-formatter";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
@@ -14,77 +14,42 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Chip from '@mui/material/Chip';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import Alert from '@mui/material/Alert';
 
-import { component } from "../../framework";
+import { component, useQuery } from "../../framework";
 import { queryExamples } from "../../constants/querySamples";
-import { api } from "../../utils/api";
 import { SqlEditor } from "../stateless/SqlEditor";
 import { SqlTooltip } from "../stateless/SqlTooltip";
-import { instance } from "../../logic";
+import { api } from "../../utils/api";
+import { QueryPayload } from "../../types/api";
+import { QueryStatus } from "../stateless/QueryStatus";
+
+const smartOptions = [
+  { option: "Validate", icon: <CheckCircleOutlineOutlinedIcon /> },
+  { option: "Explain", icon: <WbIncandescentOutlinedIcon /> },
+  { option: "Convert", icon: <LoopOutlinedIcon /> },
+  { option: "Optimize", icon: <TuneOutlinedIcon /> },
+];
 
 type SqlEditorProps = {
+  queryLoading: boolean;
   editorQuery: string;
   setEditorQuery: Dispatch<SetStateAction<string>>;
-  queryLoading: boolean;
-  setQueryLoading: Dispatch<SetStateAction<boolean>>;
 };
 
-export const SqlEditorView = component<SqlEditorProps>(({ editorQuery, setEditorQuery, queryLoading, setQueryLoading }) => {
-  const [error, setError] = useState(false);
-  const [smartAction, setSmartAction] = useState("");
-  const [helperText, setHelperText] = useState("");
-  const [validatedQuery, setValidatedQuery] = useState("");
-
-  const smartOptions = [
-    { option: "Validate", icon: <CheckCircleOutlineOutlinedIcon /> },
-    { option: "Explain", icon: <WbIncandescentOutlinedIcon /> },
-    { option: "Convert", icon: <LoopOutlinedIcon /> },
-    { option: "Optimize", icon: <TuneOutlinedIcon /> },
-  ];
-
-  useEffect(() => { }, [validatedQuery]);
+export const SqlEditorView = component<SqlEditorProps>(({ editorQuery, setEditorQuery, queryLoading }) => {
+  const [validatedQuery, setValidatedQuery] = useState<QueryPayload>();
+  const [explainedQuery, setExplainedQuery] = useState<QueryPayload>();
+  const validationRequest = useQuery(api.validateQuery, validatedQuery);
+  const explanationRequest = useQuery(api.explainQuery, explainedQuery);
 
   const handlePass = () => { };
+  const handleExplain = () => setExplainedQuery({ technology: "Snowflake", query: editorQuery });
+  const handleValidate = () => setValidatedQuery({ technology: "Snowflake", query: editorQuery });
 
   const handleSuggestionSelect = (query: string) => {
     const formattedQuery = format(query, { language: "snowflake" });
     setEditorQuery(formattedQuery);
-    setError(false);
-  };
-
-  const handleExplain = () => {
-    let payload = {
-      technology: "Snowflake",
-      query: editorQuery,
-    };
-    instance
-      .post("/queries/explain", payload)
-      .then((response) => {
-        setSmartAction("explain");
-        setHelperText(response.data.query_description);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleValidate = () => {
-    const payload = { technology: "Snowflake", query: editorQuery };
-    api.queries.validate(payload)
-      .then((response) => {
-        setSmartAction("validate");
-        if (response.data.is_query_valid === "valid") {
-          setError(false);
-          setHelperText("Query is valid.");
-        } else if (response.data.is_query_valid === "invalid") {
-          setError(true);
-          setHelperText(response.data.description);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // setError(false);
   };
 
   const tooltipOnclick = (option: string) => {
@@ -97,12 +62,7 @@ export const SqlEditorView = component<SqlEditorProps>(({ editorQuery, setEditor
 
   return (
     <Box padding={2} paddingLeft={0} display="flex" flexDirection="column">
-      <SqlEditor
-        query={editorQuery}
-        setQuery={setEditorQuery}
-        queryLoading={queryLoading}
-        setQueryLoading={setQueryLoading}
-      />
+      <SqlEditor query={editorQuery} queryLoading={queryLoading} setQuery={setEditorQuery} />
       <Box
         height={20}
         marginTop={1}
@@ -116,27 +76,18 @@ export const SqlEditorView = component<SqlEditorProps>(({ editorQuery, setEditor
             <SqlTooltip title={option.option} key={index} onClick={() => tooltipOnclick(option.option)} icon={option.icon} />)}
         </ButtonGroup>
       </Box>
-      {!error && smartAction === "explain" ? (
-        <Box height={112}>
-          <Alert severity="info" sx={{ margin: 1, padding: 1 }}>
-            <Typography marginLeft={1}>{helperText}</Typography>
-          </Alert>
-        </Box>
-      ) : !error && helperText.length < 1 ? (
-        <Box height={112} />
-      ) : !error && helperText.length > 1 ? (
-        <Box height={112}>
-          <Alert severity="success" sx={{ margin: 1, padding: 1 }}>
-          <Typography marginLeft={1}>{helperText}</Typography>
-          </Alert>
-        </Box>
-      ) : error ? (
-        <Alert severity="error" sx={{ margin: 1, padding: 1 }}>
-          <Typography marginLeft={1}>Invalid query. {helperText}</Typography>
-        </Alert>
-      ) : (
-        <></>
-      )}
+
+      <QueryStatus
+        status={validationRequest.status}
+        message={validationRequest.data || "Query is Valid"}
+        severity={validationRequest.data ? "error" : "success"}
+      />
+      <QueryStatus
+        status={explanationRequest.status}
+        message={explanationRequest.data}
+        severity="info"
+      />
+
       {/* {error && errorType === "emptyQuery" ? (
         <Box height={112}>
           <Alert severity="warning" sx={{ margin: 1, padding: 1 }}>

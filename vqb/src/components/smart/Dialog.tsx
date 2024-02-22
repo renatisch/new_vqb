@@ -12,9 +12,9 @@ import MinimizeIcon from "@mui/icons-material/Minimize";
 import WebAssetIcon from "@mui/icons-material/WebAsset";
 import CloseIcon from "@mui/icons-material/Close";
 
-import { component, useQuery } from "../../framework";
+import { component } from "../../framework";
 import { Query, Table } from "../../types/types";
-import { api } from "../../utils/api";
+import { endpoints } from "../../utils/endpoints";
 import { QueryBuilderChart } from "../atomic/QueryBuilderChart";
 import { SqlEditorView } from "./SqlEditorView";
 
@@ -23,7 +23,6 @@ export const QueryBuilderDialog = component(() => {
   const [queryLoading, setQueryLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(true);
   const [dialogView, setDialogView] = useState("vqb");
-  const [selectQueryInput, setSelectQueryInput] = useState<any>();
   // const selectQuery = useQuery(api.queries.select, selectQueryInput);
 
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -75,9 +74,9 @@ export const QueryBuilderDialog = component(() => {
         left_table_column: queryObject.primaryColumn,
         right_table_column: queryObject.secondaryColumn,
       };
-      api.queries.join(payload)
+      endpoints.queries.join(payload)
         .then((response) => {
-          const recievedQuery = response.data["queries"]["query"];
+          const recievedQuery = response["queries"]["query"];
           // const formattedQuery = format(response.data["queries"]["query"], {
           //   language: "snowflake",
           //   keywordCase: "upper",
@@ -90,10 +89,9 @@ export const QueryBuilderDialog = component(() => {
         });
     } else {
       const payload = formatTable(tables[0]);
-      setSelectQueryInput(payload);
-      api.queries.select(payload)
+      endpoints.queries.select(payload)
         .then((response) => {
-          const recievedQuery = response.data["query"];
+          const recievedQuery = response["query"];
           // const formattedQuery = format(response.data["query"], {
           //   language: "snowflake",
           //   keywordCase: "upper",
@@ -197,7 +195,6 @@ export const QueryBuilderDialog = component(() => {
             ) : (
               <SqlEditorView
                 queryLoading={queryLoading}
-                setQueryLoading={setQueryLoading}
                 editorQuery={editorQuery}
                 setEditorQuery={setEditorQuery}
               />
