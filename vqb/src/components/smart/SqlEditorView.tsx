@@ -1,24 +1,27 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { format } from "sql-formatter";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
 import LoopOutlinedIcon from "@mui/icons-material/LoopOutlined";
 import WbIncandescentOutlinedIcon from "@mui/icons-material/WbIncandescentOutlined";
-import Box from "@mui/material/Box";
-import Checkbox from "@mui/material/Checkbox";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import Stack from "@mui/material/Stack";
-import Tooltip from "@mui/material/Tooltip";
-import Chip from "@mui/material/Chip";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import Alert from "@mui/material/Alert";
+import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
+import Chip from '@mui/material/Chip';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Alert from '@mui/material/Alert';
 
-import { queryExamples } from "../constants/querySamples";
-import { SqlEditor } from "./atomic/SqlEditor";
-import { instance } from "../logic";
+import { component } from "../../framework";
+import { queryExamples } from "../../constants/querySamples";
+import { api } from "../../utils/api";
+import { SqlEditor } from "../stateless/SqlEditor";
+import { SqlTooltip } from "../stateless/SqlTooltip";
+import { instance } from "../../logic";
 
 type SqlEditorProps = {
   editorQuery: string;
@@ -27,12 +30,7 @@ type SqlEditorProps = {
   setQueryLoading: Dispatch<SetStateAction<boolean>>;
 };
 
-export const SqlEditorView: FC<SqlEditorProps> = ({
-  editorQuery,
-  setEditorQuery,
-  queryLoading,
-  setQueryLoading,
-}) => {
+export const SqlEditorView = component<SqlEditorProps>(({ editorQuery, setEditorQuery, queryLoading, setQueryLoading }) => {
   const [error, setError] = useState(false);
   const [smartAction, setSmartAction] = useState("");
   const [helperText, setHelperText] = useState("");
@@ -45,9 +43,9 @@ export const SqlEditorView: FC<SqlEditorProps> = ({
     { option: "Optimize", icon: <TuneOutlinedIcon /> },
   ];
 
-  useEffect(() => {}, [validatedQuery]);
+  useEffect(() => { }, [validatedQuery]);
 
-  const handlePass = () => {};
+  const handlePass = () => { };
 
   const handleSuggestionSelect = (query: string) => {
     const formattedQuery = format(query, { language: "snowflake" });
@@ -72,15 +70,10 @@ export const SqlEditorView: FC<SqlEditorProps> = ({
   };
 
   const handleValidate = () => {
-    let payload = {
-      technology: "Snowflake",
-      query: editorQuery,
-    };
-    instance
-      .post("/queries/validate", payload)
+    const payload = { technology: "Snowflake", query: editorQuery };
+    api.queries.validate(payload)
       .then((response) => {
         setSmartAction("validate");
-        console.log(response.data);
         if (response.data.is_query_valid === "valid") {
           setError(false);
           setHelperText("Query is valid.");
@@ -94,8 +87,16 @@ export const SqlEditorView: FC<SqlEditorProps> = ({
       });
   };
 
+  const tooltipOnclick = (option: string) => {
+    option === "Validate"
+      ? handleValidate()
+      : option === "Explain"
+        ? handleExplain()
+        : handlePass();
+  }
+
   return (
-    <Box padding={2} paddingLeft={0} display={"flex"} flexDirection={"column"}>
+    <Box padding={2} paddingLeft={0} display="flex" flexDirection="column">
       <SqlEditor
         query={editorQuery}
         setQuery={setEditorQuery}
@@ -106,29 +107,13 @@ export const SqlEditorView: FC<SqlEditorProps> = ({
         height={20}
         marginTop={1}
         marginRight={0.5}
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"end"}
+        display="flex"
+        alignItems="center"
+        justifyContent="end"
       >
         <ButtonGroup>
-          {smartOptions.map((option, index) => {
-            return (
-              <Tooltip title={option.option} key={index}>
-                <IconButton
-                  sx={{ marginRight: 0 }}
-                  onClick={() => {
-                    option.option === "Validate"
-                      ? handleValidate()
-                      : option.option === "Explain"
-                      ? handleExplain()
-                      : handlePass();
-                  }}
-                >
-                  {option.icon}
-                </IconButton>
-              </Tooltip>
-            );
-          })}
+          {smartOptions.map((option, index) =>
+            <SqlTooltip title={option.option} key={index} onClick={() => tooltipOnclick(option.option)} icon={option.icon} />)}
         </ButtonGroup>
       </Box>
       {!error && smartAction === "explain" ? (
@@ -142,7 +127,7 @@ export const SqlEditorView: FC<SqlEditorProps> = ({
       ) : !error && helperText.length > 1 ? (
         <Box height={112}>
           <Alert severity="success" sx={{ margin: 1, padding: 1 }}>
-            <Typography marginLeft={1}>{helperText}</Typography>
+          <Typography marginLeft={1}>{helperText}</Typography>
           </Alert>
         </Box>
       ) : error ? (
@@ -164,7 +149,7 @@ export const SqlEditorView: FC<SqlEditorProps> = ({
             Invalid query. Please use the following query instead.
           </Typography>
           <Box margin={0.5}>
-            <Stack spacing={1} direction={"row"}>
+            <Stack spacing={1} direction="row">
               <Chip
                 label={validatedQuery}
                 color="primary"
@@ -199,14 +184,14 @@ export const SqlEditorView: FC<SqlEditorProps> = ({
       ) : (
         <Box height={112}></Box>
       )} */}
-      <Box display={"flex"} flexDirection={"column"} marginTop={0.5}>
+      <Box display="flex" flexDirection="column" marginTop={0.5}>
         <Typography fontSize={15} fontWeight={550} marginBottom={1}>
           Query suggestions:
         </Typography>
         {queryExamples.map((query, index) => {
           return (
             <Box margin={0.5} key={index}>
-              <Stack spacing={1} direction={"row"}>
+              <Stack spacing={1} direction="row">
                 <Chip
                   label={query.query}
                   color="primary"
@@ -225,7 +210,7 @@ export const SqlEditorView: FC<SqlEditorProps> = ({
           );
         })}
       </Box>
-      <Box display={"flex"} alignItems={"center"} marginTop={2}>
+      <Box display="flex" alignItems="center" marginTop={2}>
         <Checkbox />
         <Typography>Open SQL Editor view by default</Typography>
         <Button
@@ -245,4 +230,4 @@ export const SqlEditorView: FC<SqlEditorProps> = ({
       </Box>
     </Box>
   );
-};
+});

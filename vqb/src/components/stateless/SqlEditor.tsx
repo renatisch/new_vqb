@@ -1,10 +1,11 @@
-import { Dispatch, FC, SetStateAction, useCallback } from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 import CodeMirror from "@uiw/react-codemirror";
+import Box from "@mui/material/Box";
 import { sql } from "@codemirror/lang-sql";
-import { SQLConfig, StandardSQL } from "@codemirror/lang-sql";
+import { StandardSQL } from "@codemirror/lang-sql";
 import { format } from "sql-formatter";
-import { Box } from "@mui/material";
 
+import { component } from "../../framework";
 import { LoaderOverlay } from "./LoadingOverlay";
 
 interface SqlEditorProps {
@@ -14,11 +15,9 @@ interface SqlEditorProps {
   setQueryLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-export const SqlEditor: FC<SqlEditorProps> = ({
-  query,
-  setQuery,
-  queryLoading,
-}) => {
+export const SqlEditor = component<SqlEditorProps>(({ query, setQuery, queryLoading }) => {
+  const extensions = [sql({ dialect: StandardSQL, upperCaseKeywords: true })];
+
   const onChange = useCallback((val: any) => {
     // const formattedQuery = format(val, {
     //   language: "snowflake",
@@ -27,18 +26,13 @@ export const SqlEditor: FC<SqlEditorProps> = ({
     setQuery(val);
   }, []);
 
-  const config: SQLConfig = {
-    dialect: StandardSQL,
-    upperCaseKeywords: true,
-  };
-
   return (
     <Box padding={0}>
       {queryLoading ? <LoaderOverlay /> : <Box height={"30px"}></Box>}
       <CodeMirror
         value={query}
         height="300px"
-        extensions={[sql(config)]}
+        extensions={extensions}
         onChange={onChange}
         basicSetup={{
           lineNumbers: false,
@@ -54,4 +48,4 @@ export const SqlEditor: FC<SqlEditorProps> = ({
       />
     </Box>
   );
-};
+});

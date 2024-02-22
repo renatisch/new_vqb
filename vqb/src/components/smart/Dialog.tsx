@@ -1,30 +1,31 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { Node, Edge } from "reactflow";
-import { format } from "sql-formatter";
-import {
-  Dialog,
-  Paper,
-  Box,
-  Typography,
-  Grid,
-  Button,
-  IconButton,
-  Checkbox,
-} from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Checkbox from "@mui/material/Checkbox";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import WebAssetIcon from "@mui/icons-material/WebAsset";
 import CloseIcon from "@mui/icons-material/Close";
 
-import { Query, Table } from "../types/types";
-import { instance } from "../logic";
-import { QueryBuilderChart } from "./atomic/QueryBuilderChart";
+import { component, useQuery } from "../../framework";
+import { Query, Table } from "../../types/types";
+import { api } from "../../utils/api";
+import { QueryBuilderChart } from "../atomic/QueryBuilderChart";
 import { SqlEditorView } from "./SqlEditorView";
 
-export const QueryBuilderDialog: FC = () => {
+export const QueryBuilderDialog = component(() => {
   const [editorQuery, setEditorQuery] = useState("");
   const [queryLoading, setQueryLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(true);
   const [dialogView, setDialogView] = useState("vqb");
+  const [selectQueryInput, setSelectQueryInput] = useState<any>();
+  // const selectQuery = useQuery(api.queries.select, selectQueryInput);
+
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [query, setQuery] = useState<Query>({
@@ -48,10 +49,10 @@ export const QueryBuilderDialog: FC = () => {
   ]);
 
   const formatTable = (table: Table) => {
-    let columns = table.columns?.filter((column) => {
+    const columns = table.columns?.filter((column) => {
       return column.selected;
     });
-    let selectedColumns = columns?.map((column) => {
+    const selectedColumns = columns?.map((column) => {
       return column.name;
     });
     return {
@@ -63,9 +64,9 @@ export const QueryBuilderDialog: FC = () => {
     };
   };
   const generateQuery = (queryObject: Query) => {
-    let technology = "Snowflake";
+    const technology = "Snowflake";
     if (queryObject.action.length > 0) {
-      let payload = {
+      const payload = {
         technology: technology,
         join_type: "left",
         databases: [queryObject.primaryDatabase, queryObject.secondaryDatabase],
@@ -74,11 +75,9 @@ export const QueryBuilderDialog: FC = () => {
         left_table_column: queryObject.primaryColumn,
         right_table_column: queryObject.secondaryColumn,
       };
-      instance
-        .post("/queries/join", payload)
+      api.queries.join(payload)
         .then((response) => {
-          console.log(response);
-          let recievedQuery = response.data["queries"]["query"];
+          const recievedQuery = response.data["queries"]["query"];
           // const formattedQuery = format(response.data["queries"]["query"], {
           //   language: "snowflake",
           //   keywordCase: "upper",
@@ -90,12 +89,11 @@ export const QueryBuilderDialog: FC = () => {
           console.log(error);
         });
     } else {
-      let payload = formatTable(tables[0]);
-      instance
-        .post("/queries/select", payload)
+      const payload = formatTable(tables[0]);
+      setSelectQueryInput(payload);
+      api.queries.select(payload)
         .then((response) => {
-          console.log(response);
-          let recievedQuery = response.data["query"];
+          const recievedQuery = response.data["query"];
           // const formattedQuery = format(response.data["query"], {
           //   language: "snowflake",
           //   keywordCase: "upper",
@@ -114,7 +112,6 @@ export const QueryBuilderDialog: FC = () => {
       setDialogView("sql_editor");
       setQueryLoading(false);
     } else {
-      console.log("run");
       generateQuery(query);
       setDialogView("sql_editor");
     }
@@ -130,43 +127,29 @@ export const QueryBuilderDialog: FC = () => {
       hideBackdrop
       open={dialogOpen}
       fullWidth
-      maxWidth={"md"}
+      maxWidth="md"
       PaperProps={{ sx: { height: 860, width: 1400 } }}
     >
       <Paper sx={{ background: "#f1f1f1", height: "100%" }}>
-        <Box
-          display={"flex"}
-          sx={{ background: "#0b71c6" }}
-          paddingX={2}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
-          <Typography color={"white"} fontSize={14}>
+        <Box display="flex" sx={{ background: "#0b71c6" }} paddingX={2} justifyContent="space-between" alignItems="center">
+          <Typography color="white" fontSize={14}>
             AI Powered VQB
           </Typography>
-          <Box alignItems={"center"}>
+          <Box alignItems="center">
             <IconButton>
-              <MinimizeIcon
-                sx={{ color: "white", paddingRight: 1, height: 20 }}
-              />
+              <MinimizeIcon sx={{ color: "white", paddingRight: 1, height: 20 }} />
             </IconButton>
             <IconButton>
-              <WebAssetIcon
-                sx={{ color: "white", paddingRight: 1, height: 20 }}
-              />
+              <WebAssetIcon sx={{ color: "white", paddingRight: 1, height: 20 }} />
             </IconButton>
-            <IconButton
-              onClick={() => {
-                setDialogOpen(false);
-              }}
-            >
+            <IconButton onClick={() => setDialogOpen(false)} >
               <CloseIcon sx={{ color: "white", paddingRight: 1, height: 20 }} />
             </IconButton>
           </Box>
         </Box>
         <Grid container padding={2}>
           <Grid item xs={12} marginY={1}>
-            <Box display={"flex"}>
+            <Box display="flex">
               <input className="winCl-btn" type="button" value="Tables" />
               <input
                 className={
@@ -223,7 +206,7 @@ export const QueryBuilderDialog: FC = () => {
           <Grid item xs={12}>
             {dialogView === "vqb" ? (
               <Grid item xs={12}>
-                <Box display={"flex"} alignItems={"center"}>
+                <Box display="flex" alignItems="center">
                   <Checkbox />
                   <Typography>Open Visual Query Builder by default</Typography>
                 </Box>
@@ -235,9 +218,9 @@ export const QueryBuilderDialog: FC = () => {
             )}
             <Grid item xs={12}>
               <Box
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"end"}
+                display="flex"
+                alignItems="center"
+                justifyContent="end"
                 paddingRight={2}
               >
                 <Button
@@ -267,4 +250,4 @@ export const QueryBuilderDialog: FC = () => {
       </Paper>
     </Dialog>
   );
-};
+});

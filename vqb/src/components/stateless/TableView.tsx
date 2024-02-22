@@ -1,30 +1,22 @@
-import { FC } from "react";
 import { GoNumber } from "react-icons/go";
 import { MdAbc } from "react-icons/md";
-
 import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+
+import { component } from "../../framework";
 
 type TableViewProps = {
   column: any;
   onClick: () => void;
 }
 
-export const TableView: FC<TableViewProps> = ({ column, onClick }) => {
+export const TableView = component<TableViewProps>(({ column, onClick }) => {
   return (
     <Grid item xs={12}>
-      <Box
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-      >
-        <Box
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"start"}
-        >
+      <Box display="flex" alignItems="center" justifyContent="space-between">
+        <Box display="flex" alignItems="center" justifyContent="start">
           <Checkbox
             checked={column.selected && true}
             onClick={onClick}
@@ -37,15 +29,11 @@ export const TableView: FC<TableViewProps> = ({ column, onClick }) => {
           ) : (
             <GoNumber height={10} />
           )}
-          <Typography
-            fontSize={8}
-            marginLeft={1}
-            textTransform={"uppercase"}
-          >
+          <Typography fontSize={8} marginLeft={1} textTransform="uppercase">
             {column.name}
           </Typography>
         </Box>
       </Box>
     </Grid>
   );
-}
+});

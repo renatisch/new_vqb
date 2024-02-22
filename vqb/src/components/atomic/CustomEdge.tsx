@@ -1,12 +1,11 @@
-import { FC, useContext } from "react";
-
+import { useContext } from "react";
 import { BaseEdge, EdgeLabelRenderer, getStraightPath } from "reactflow";
-
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
+import { component } from "../../framework";
 import { QueryBuilderContext } from "../../contexts/queryBuilderContext";
 
 type CustomEdgeProps = {
@@ -17,7 +16,7 @@ type CustomEdgeProps = {
   targetY: number;
 }
 
-export const CustomEdge: FC<CustomEdgeProps> = ({ id, sourceX, sourceY, targetX, targetY }) => {
+export const CustomEdge = component<CustomEdgeProps>(({ id, sourceX, sourceY, targetX, targetY }) => {
   const [edgePath, labelX, labelY] = getStraightPath({ sourceX, sourceY, targetX, targetY });
 
   const { query, setQuery, action, setAction } = useContext(QueryBuilderContext);
@@ -50,11 +49,11 @@ export const CustomEdge: FC<CustomEdgeProps> = ({ id, sourceX, sourceY, targetX,
             label="Action"
             onChange={handleChange}
           >
-            <MenuItem value={"join"}>Join</MenuItem>
-            <MenuItem value={"union"}>Union</MenuItem>
+            <MenuItem value="join">Join</MenuItem>
+            <MenuItem value="union">Union</MenuItem>
           </Select>
         </FormControl>
       </EdgeLabelRenderer>
     </>
   );
-}
+});

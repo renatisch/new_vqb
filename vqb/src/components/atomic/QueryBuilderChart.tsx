@@ -1,7 +1,9 @@
+import { Dispatch, SetStateAction, useState, useEffect, useCallback } from "react";
 import ReactFlow, { applyEdgeChanges, applyNodeChanges, OnNodesChange, OnEdgesChange, Node, Edge, addEdge, getIncomers, getConnectedEdges, getOutgoers, NodeTypes, FitViewOptions, DefaultEdgeOptions } from "reactflow";
-import { Grid, Box } from "@mui/material";
-import { FC, Dispatch, SetStateAction, useState, useEffect, useCallback } from "react";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 
+import { component } from "../../framework";
 import { Table, Query } from "../../types/types";
 import { QueryBuilderContext } from "../../contexts/queryBuilderContext";
 import { DbNode } from "./DbNode";
@@ -45,7 +47,7 @@ type QueryBuilderChartProps = {
   setTables: Dispatch<SetStateAction<Table[]>>;
 };
 
-export const QueryBuilderChart: FC<QueryBuilderChartProps> = ({ nodes, setNodes, edges, setEdges, editorQuery, setEditorQuery, queryLoading, setQueryLoading, query, setQuery, tables, setTables }) => {
+export const QueryBuilderChart = component<QueryBuilderChartProps>(({ nodes, setNodes, edges, setEdges, editorQuery, setEditorQuery, queryLoading, setQueryLoading, query, setQuery, tables, setTables }) => {
   const [action, setAction] = useState("");
 
   const getNode = (table: Table, index: number) => {
@@ -104,7 +106,7 @@ export const QueryBuilderChart: FC<QueryBuilderChartProps> = ({ nodes, setNodes,
   );
 
   const deleteTable = (tableName: string) => {
-    let remainingTables = tables.filter((table) => {
+    const remainingTables = tables.filter((table) => {
       if (table.tableName !== tableName) {
         return table;
       }
@@ -199,11 +201,11 @@ export const QueryBuilderChart: FC<QueryBuilderChartProps> = ({ nodes, setNodes,
           </div>
         </Grid>
         <Grid item xs={3}>
-          <Box height={"100%"} width={"100%"} className="vqb" bgcolor={"white"}>
+          <Box height="100%" width="100%" className="vqb" bgcolor="white">
             <SchemaLister />
           </Box>
         </Grid>
       </Grid>
     </QueryBuilderContext.Provider>
   );
-}
+});
