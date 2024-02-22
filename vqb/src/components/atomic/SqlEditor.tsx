@@ -14,7 +14,11 @@ interface SqlEditorProps {
   setQueryLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-export const SqlEditor: FC<SqlEditorProps> = ({ query, setQuery, queryLoading }) => {
+export const SqlEditor: FC<SqlEditorProps> = ({
+  query,
+  setQuery,
+  queryLoading,
+}) => {
   const onChange = useCallback((val: any) => {
     // const formattedQuery = format(val, {
     //   language: "snowflake",
@@ -30,7 +34,7 @@ export const SqlEditor: FC<SqlEditorProps> = ({ query, setQuery, queryLoading })
 
   return (
     <Box padding={0}>
-      {queryLoading && <LoaderOverlay />}
+      {queryLoading ? <LoaderOverlay /> : <Box height={"30px"}></Box>}
       <CodeMirror
         value={query}
         height="300px"
@@ -50,4 +54,4 @@ export const SqlEditor: FC<SqlEditorProps> = ({ query, setQuery, queryLoading })
       />
     </Box>
   );
-}
+};

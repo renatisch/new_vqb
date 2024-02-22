@@ -13,9 +13,17 @@ from tools.get_object_tool import get_object_tool
 from tools.describe_query_tool import describe_query_tool
 from tools.left_join_query_tool import left_join_query_tool
 from tools.select_query_tool import select_query_tool
+from tools.connect_db_tool import connect_db_tool
 from langchain_core.pydantic_v1 import BaseModel, Field
-from typing import Dict
+from typing import Dict, List
 from langchain.output_parsers.pydantic import PydanticOutputParser
+
+
+class Response(BaseModel):
+    databases: List = Field(
+        description="List of database names retrieved from database."
+    )
+    queries: Dict = Field(description="List of requested queries")
 
 
 class Queries(BaseModel):

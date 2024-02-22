@@ -4,13 +4,12 @@ from handlers.handlers import ChatModelStartHandler
 from langchain.tools import StructuredTool
 from langchain_openai import OpenAI
 from tools.technology_context import technologies
-from models import IsQueryValid, Description
+from models import Query_Description
 from typing import List
 
 
-def query_validate(technology: str, query: str):
-    user_input = f"""Validate if the following sql query conforms with {technology} SQL dialect.\n
-                    SQL query to validate: {query}
+def query_explain(technology: str, query: str):
+    user_input = f"""Provide a short two-sentence description of the following {technology} SQL query: {query}.
                  """
     ChatStartHandler = ChatModelStartHandler()
     model = OpenAI(
@@ -18,26 +17,20 @@ def query_validate(technology: str, query: str):
         temperature=0.0,
         callbacks=[ChatStartHandler],
     )
-    output_parser = StructuredOutputParser.from_response_schemas(
-        [IsQueryValid, Description]
-    )
+    output_parser = StructuredOutputParser.from_response_schemas([Query_Description])
     response_format = output_parser.get_format_instructions()
     prompt = PromptTemplate(
         template="""
-        You are a SQL expert, your help users validate that SQL queries they provide conform with SQL dialects used by the following\n
-        database technologies: Snowflake, Databricks, Google BigQuery.\n
-        When validating SQL queries, you MUST keep in mind the following key relationships between data objects in technologies:\n
+        You are a SQL expert, your help users understand what specific SQL queries do.\n
+        You know the following database technologies: Snowflake, Databricks, Google BigQuery.\n
+        When responding, you MUST keep in mind the following key relationships between data objects in technologies:\n
         Relationships:\n
         {relationship}\n
 
-        When responding provide fully qualified table name for data.\n
         In {technology}, a fully qualified name (FQN) refers to the complete and unambiguous identifier for a particular data object,\n
         such as a table within the platform. The FQN includes the names of the catalog, schema, and the object itself.\n
         The structure is generally as follows:\n
         {schema}\n
-
-        For example:\n
-        {examples}\n
 
         End query with parenthesis ';' sign. \n{format_instructions}\n
 

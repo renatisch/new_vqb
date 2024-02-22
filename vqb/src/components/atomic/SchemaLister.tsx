@@ -11,7 +11,13 @@ import { ListerTreeItem } from "./ListerTreeItem";
 export const SchemaLister: FC = () => {
   const { tables, setTables } = useContext(QueryBuilderContext);
 
-  const handleSelectTable = ({ database, schema, tableName, columns, expanded }: FullTableName) => {
+  const handleSelectTable = ({
+    database,
+    schema,
+    tableName,
+    columns,
+    expanded,
+  }: FullTableName) => {
     let uniqueTables = tables.filter((table) => {
       if (table.tableName !== tableName) {
         return table;
@@ -56,12 +62,15 @@ export const SchemaLister: FC = () => {
         defaultExpandIcon={<PlusSquare />}
         sx={{ overflowX: "hidden" }}
       >
-        {TableData.map((db) => <ListerTreeItem
-          {...db}
-          handleSelectTable={handleSelectTable}
-          findSchemaAndDb={findSchemaAndDb}
-        />)}
+        {TableData.map((db, index) => (
+          <ListerTreeItem
+            key={index}
+            {...db}
+            handleSelectTable={handleSelectTable}
+            findSchemaAndDb={findSchemaAndDb}
+          />
+        ))}
       </TreeView>
     </Box>
   );
-}
+};

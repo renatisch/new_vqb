@@ -1,9 +1,8 @@
-from dotenv import load_dotenv
 import os
 from snowflake.connector import connect
 
 
-def snowflake_get_dbs(query: str):
+def get_snowflake(query: str):
     ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT")
     PASSWWORD = os.getenv("SNOWFLAKE_PASSWORD")
     conn = connect(
@@ -20,6 +19,3 @@ def snowflake_get_dbs(query: str):
     for each in response:
         databases.append(each[1])
     return databases
-
-
-snowflake_get_dbs(query="SHOW DATABASES;")

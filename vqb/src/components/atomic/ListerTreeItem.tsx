@@ -4,13 +4,17 @@ import { MdAbc, MdOutlineSchema } from "react-icons/md";
 import { CiViewTable } from "react-icons/ci";
 import { GoNumber } from "react-icons/go";
 
-import { FullTableName, FullyQualifiedTableName, TreeProps } from "../../types/types";
+import {
+  FullTableName,
+  FullyQualifiedTableName,
+  TreeProps,
+} from "../../types/types";
 import SchemaListerTreeItem from "./TreeItem";
 
 type ListerTreeItemProps = TreeProps & {
   handleSelectTable: (tableData: FullTableName) => void;
   findSchemaAndDb: (tableName: string) => FullyQualifiedTableName;
-}
+};
 
 export const ListerTreeItem: FC<ListerTreeItemProps> = (nodes) => {
   return (
@@ -46,12 +50,15 @@ export const ListerTreeItem: FC<ListerTreeItemProps> = (nodes) => {
       }}
     >
       {Array.isArray(nodes.children)
-        ? nodes.children.map(node => <ListerTreeItem
-          {...node}
-          handleSelectTable={nodes.handleSelectTable}
-          findSchemaAndDb={nodes.findSchemaAndDb}
-        />)
+        ? nodes.children.map((node, index) => (
+            <ListerTreeItem
+              key={index}
+              {...node}
+              handleSelectTable={nodes.handleSelectTable}
+              findSchemaAndDb={nodes.findSchemaAndDb}
+            />
+          ))
         : null}
     </SchemaListerTreeItem>
   );
-}
+};

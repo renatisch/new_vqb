@@ -17,6 +17,10 @@ Description = ResponseSchema(
     description="One sentence description of the reason query is valid or invalid.",
 )
 
+Query_Description = ResponseSchema(
+    name="query_description",
+    description="Description of the sql query.",
+)
 
 ObjectType = ResponseSchema(
     name="objects",
@@ -60,3 +64,7 @@ class Select_Query_Tool_Args(BaseModel):
     schema_name: str = Field(description="Database schema name.")
     table_name: str = Field(description="Table name.")
     columns_to_select: List[str] = Field(description="Columns to select")
+
+
+class Connect_DB_Tool_Args(BaseModel):
+    query: str = Field(description="SQL query to be executed against database.")

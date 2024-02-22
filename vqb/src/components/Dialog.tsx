@@ -1,7 +1,16 @@
 import { FC, useState } from "react";
 import { Node, Edge } from "reactflow";
 import { format } from "sql-formatter";
-import { Dialog, Paper, Box, Typography, Grid, Button, IconButton, Checkbox } from "@mui/material";
+import {
+  Dialog,
+  Paper,
+  Box,
+  Typography,
+  Grid,
+  Button,
+  IconButton,
+  Checkbox,
+} from "@mui/material";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import WebAssetIcon from "@mui/icons-material/WebAsset";
 import CloseIcon from "@mui/icons-material/Close";
@@ -258,4 +267,4 @@ export const QueryBuilderDialog: FC = () => {
       </Paper>
     </Dialog>
   );
-}
+};

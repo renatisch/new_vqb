@@ -9,9 +9,9 @@ import Button from "@mui/material/Button";
 
 export const LoaderOverlay: FC = () => {
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", height: "30px" }}>
       <Typography variant="subtitle2">Query is loading...</Typography>
       <LinearProgress />
     </Box>
   );
-}
+};

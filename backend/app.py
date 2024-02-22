@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 from llm import initial_queries_assistant
 from api_models import Payload, Technology, SQLQuery, DBs, Query_to_Validate
 from tools.select_query_tool import select_query
-from tools.validate_query_tool import validate_query
+from tools.explain_query_tool import query_explain
+from tools.validate_query_tool import query_validate
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv(verbose=True, override=True)
@@ -53,7 +54,7 @@ def get_initial_queries(technology: Technology) -> list:
 
 
 @app.post("/queries/select")
-def get_initial_queries(data: Payload) -> SQLQuery:
+def get_select_query(data: Payload) -> SQLQuery:
     response = select_query(
         technology=data.technology,
         database_name=data.database,
@@ -65,7 +66,7 @@ def get_initial_queries(data: Payload) -> SQLQuery:
 
 
 @app.post("/queries/join")
-def get_initial_queries(data: DBs):
+def get_join_query(data: DBs):
     input = f"""Generate a LEFT JOIN query.\n
             The query shall use {data.technology} specific SQL dialect\n
             Left table to join on: {data.databases[0]}.{data.schemas[0]}.{data.tables[0]}. Right table to join on: {data.databases[1]}.{data.schemas[1]}.{data.tables[1]}\n
@@ -78,8 +79,14 @@ def get_initial_queries(data: DBs):
 
 
 @app.post("/queries/validate")
-def get_initial_queries(query: Query_to_Validate):
-    response = validate_query(technology=query.technology, query=query.query)
+def validate_query(query: Query_to_Validate):
+    response = query_validate(technology=query.technology, query=query.query)
+    return response
+
+
+@app.post("/queries/explain")
+def explain_query(query: Query_to_Validate):
+    response = query_explain(technology=query.technology, query=query.query)
     return response
 
 

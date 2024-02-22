@@ -5,16 +5,16 @@ import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutli
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined";
 import LoopOutlinedIcon from "@mui/icons-material/LoopOutlined";
 import WbIncandescentOutlinedIcon from "@mui/icons-material/WbIncandescentOutlined";
-import Box from '@mui/material/Box';
-import Checkbox from '@mui/material/Checkbox';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
-import Chip from '@mui/material/Chip';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Alert from '@mui/material/Alert';
+import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
+import Chip from "@mui/material/Chip";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import Alert from "@mui/material/Alert";
 
 import { queryExamples } from "../constants/querySamples";
 import { SqlEditor } from "./atomic/SqlEditor";
@@ -27,10 +27,14 @@ type SqlEditorProps = {
   setQueryLoading: Dispatch<SetStateAction<boolean>>;
 };
 
-export const SqlEditorView: FC<SqlEditorProps> = ({ editorQuery, setEditorQuery, queryLoading, setQueryLoading }) => {
+export const SqlEditorView: FC<SqlEditorProps> = ({
+  editorQuery,
+  setEditorQuery,
+  queryLoading,
+  setQueryLoading,
+}) => {
   const [error, setError] = useState(false);
-  const [errorType, setErrorType] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [smartAction, setSmartAction] = useState("");
   const [helperText, setHelperText] = useState("");
   const [validatedQuery, setValidatedQuery] = useState("");
 
@@ -51,7 +55,21 @@ export const SqlEditorView: FC<SqlEditorProps> = ({ editorQuery, setEditorQuery,
     setError(false);
   };
 
-  const handleExplain = () => {};
+  const handleExplain = () => {
+    let payload = {
+      technology: "Snowflake",
+      query: editorQuery,
+    };
+    instance
+      .post("/queries/explain", payload)
+      .then((response) => {
+        setSmartAction("explain");
+        setHelperText(response.data.query_description);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const handleValidate = () => {
     let payload = {
@@ -61,10 +79,11 @@ export const SqlEditorView: FC<SqlEditorProps> = ({ editorQuery, setEditorQuery,
     instance
       .post("/queries/validate", payload)
       .then((response) => {
+        setSmartAction("validate");
         console.log(response.data);
         if (response.data.is_query_valid === "valid") {
           setError(false);
-          setHelperText("");
+          setHelperText("Query is valid.");
         } else if (response.data.is_query_valid === "invalid") {
           setError(true);
           setHelperText(response.data.description);
@@ -112,10 +131,18 @@ export const SqlEditorView: FC<SqlEditorProps> = ({ editorQuery, setEditorQuery,
           })}
         </ButtonGroup>
       </Box>
-      {!error && helperText.length < 1 ? (
+      {!error && smartAction === "explain" ? (
+        <Box height={112}>
+          <Alert severity="info" sx={{ margin: 1, padding: 1 }}>
+            <Typography marginLeft={1}>{helperText}</Typography>
+          </Alert>
+        </Box>
+      ) : !error && helperText.length < 1 ? (
+        <Box height={112} />
+      ) : !error && helperText.length > 1 ? (
         <Box height={112}>
           <Alert severity="success" sx={{ margin: 1, padding: 1 }}>
-            <Typography marginLeft={1}>Valid query</Typography>
+            <Typography marginLeft={1}>{helperText}</Typography>
           </Alert>
         </Box>
       ) : error ? (
@@ -218,4 +245,4 @@ export const SqlEditorView: FC<SqlEditorProps> = ({ editorQuery, setEditorQuery,
       </Box>
     </Box>
   );
-}
+};
