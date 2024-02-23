@@ -36,8 +36,8 @@ technologies = {
                         Table: a collection of rows and columns stored as data.\n""",
         "schema": "database_id.schema_id.table_id",
         "examples": """
-            SHOW TABLES in <database_id>.<schema_id>\n
-            SELECT * FROM <database_id>.<schema_id>.<table_id>""",
+            SHOW TABLES in "<database_id>"."<schema_id>"\n
+            SELECT * FROM "<database_id>"."<schema_id>"."<table_id>"\n""",
         "inputs": [
             {
                 "object": "database",
