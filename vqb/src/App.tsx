@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-import { QueryBuilderDialog } from "./components/smart/Dialog";
+import { QueryBuilderDialog } from "./components/smart/QueryBuilderDialog";
 
 const queryClient = new QueryClient({
   defaultOptions: {

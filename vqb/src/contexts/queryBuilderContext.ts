@@ -23,8 +23,6 @@ export const QueryBuilderContext = createContext<QueryDialogContextProps>({
     action: "",
   },
   setQuery: () => {},
-  queryLoading: false,
-  setQueryLoading: () => {},
   editorQuery: "",
   setEditorQuery: () => {},
 });

@@ -14,19 +14,16 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import { component } from "../../framework";
 import { Query, Table } from "../../types/types";
-import { endpoints } from "../../utils/endpoints";
-import { QueryBuilderChart } from "../atomic/QueryBuilderChart";
-import { SqlEditorView } from "./SqlEditorView";
+import { VisualQueryBuilder } from "./Tabs/VisualQueryBuilder";
+import { SqlEditorView } from "./Tabs/SqlEditorView";
 import { TechnologySelector } from "../atomic/TechnologySelector";
 
 export const QueryBuilderDialog = component(() => {
   const [editorQuery, setEditorQuery] = useState("");
-  const [queryLoading, setQueryLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(true);
   const [dialogView, setDialogView] = useState("vqb");
   const [technology, setTechnology] = useState("Snowflake");
-  // const selectQuery = useQuery(api.queries.select, selectQueryInput);
-
+  const [tables, setTables] = useState<Table[]>([]);
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [query, setQuery] = useState<Query>({
@@ -40,85 +37,10 @@ export const QueryBuilderDialog = component(() => {
     secondaryColumn: "",
     action: "",
   });
-  const [tables, setTables] = useState<Table[]>([
-    {
-      database: "",
-      schema: "",
-      tableName: "",
-      columns: [],
-    },
-  ]);
 
-  const formatTable = (table: Table) => {
-    const columns = table.columns?.filter((column) => {
-      return column.selected;
-    });
-    const selectedColumns = columns?.map((column) => {
-      return column.name;
-    });
-    return {
-      technology: "Snowflake",
-      database: table.database,
-      table_schema: table.schema,
-      table: table.tableName,
-      columns: selectedColumns,
-    };
-  };
-  const generateQuery = (queryObject: Query) => {
-    const technology = "Snowflake";
-    if (queryObject.action.length > 0) {
-      const payload = {
-        technology: technology,
-        join_type: "left",
-        databases: [queryObject.primaryDatabase, queryObject.secondaryDatabase],
-        schemas: [queryObject.primarySchema, queryObject.secondarySchema],
-        tables: [queryObject.primaryTable, queryObject.secondaryTable],
-        left_table_column: queryObject.primaryColumn,
-        right_table_column: queryObject.secondaryColumn,
-      };
-      endpoints.queries.join(payload)
-        .then((response) => {
-          const recievedQuery = response["queries"]["query"];
-          // const formattedQuery = format(response.data["queries"]["query"], {
-          //   language: "snowflake",
-          //   keywordCase: "upper",
-          // });
-          setEditorQuery(recievedQuery);
-          setQueryLoading(false);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      const payload = formatTable(tables[0]);
-      endpoints.queries.select(payload)
-        .then((response) => {
-          const recievedQuery = response["query"];
-          // const formattedQuery = format(response.data["query"], {
-          //   language: "snowflake",
-          //   keywordCase: "upper",
-          // });
-          setEditorQuery(recievedQuery);
-          setQueryLoading(false);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
-
-  const switchToSQLEditor = () => {
-    if (tables.length < 1) {
-      setDialogView("sql_editor");
-      setQueryLoading(false);
-    } else {
-      generateQuery(query);
-      setDialogView("sql_editor");
-    }
-  };
+  const switchToSQLEditor = () => setDialogView("sql_editor");
   const switchToVQB = () => {
     setDialogView("vqb");
-    setQueryLoading(true);
     setEditorQuery("");
   };
 
@@ -128,7 +50,7 @@ export const QueryBuilderDialog = component(() => {
       open={dialogOpen}
       fullWidth
       maxWidth="md"
-      PaperProps={{ sx: { height: 860, width: 1400 } }}
+      PaperProps={{ sx: { height: 900, width: 1400 } }}
     >
       <Paper sx={{ background: "#f1f1f1", height: "100%" }}>
         <Box display="flex" sx={{ background: "#0b71c6" }} paddingX={2} justifyContent="space-between" alignItems="center">
@@ -172,9 +94,7 @@ export const QueryBuilderDialog = component(() => {
                 }
                 type="button"
                 value="SQL Editor"
-                onClick={() => {
-                  switchToSQLEditor();
-                }}
+                onClick={switchToSQLEditor}
               />
             </Box>
           </Grid>
@@ -190,15 +110,13 @@ export const QueryBuilderDialog = component(() => {
           )}
           <Grid item xs={12}>
             {dialogView === "vqb" ? (
-              <QueryBuilderChart
+              <VisualQueryBuilder
                 nodes={nodes}
                 edges={edges}
                 setNodes={setNodes}
                 setEdges={setEdges}
                 editorQuery={editorQuery}
                 setEditorQuery={setEditorQuery}
-                queryLoading={queryLoading}
-                setQueryLoading={setQueryLoading}
                 query={query}
                 setQuery={setQuery}
                 tables={tables}
@@ -207,8 +125,8 @@ export const QueryBuilderDialog = component(() => {
             ) : (
               <SqlEditorView
                 technology={technology}
-                queryLoading={queryLoading}
-                editorQuery={editorQuery}
+                query={query}
+                tables={tables}
                 setEditorQuery={setEditorQuery}
               />
             )}
@@ -241,15 +159,8 @@ export const QueryBuilderDialog = component(() => {
                 </Button>
                 <Button
                   variant="outlined"
-                  sx={{
-                    width: 100,
-                    height: 30,
-                    marginRight: 2,
-                    textTransform: "none",
-                  }}
-                  onClick={() => {
-                    setDialogOpen(false);
-                  }}
+                  sx={{ width: 100, height: 30, marginRight: 2, textTransform: "none" }}
+                  onClick={() => setDialogOpen(false)}
                 >
                   Cancel
                 </Button>

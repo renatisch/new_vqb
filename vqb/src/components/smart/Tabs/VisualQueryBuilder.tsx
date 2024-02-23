@@ -3,12 +3,12 @@ import ReactFlow, { applyEdgeChanges, applyNodeChanges, OnNodesChange, OnEdgesCh
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
-import { component } from "../../framework";
-import { Table, Query } from "../../types/types";
-import { QueryBuilderContext } from "../../contexts/queryBuilderContext";
-import { DbNode } from "./DbNode";
-import { CustomEdge }  from "./CustomEdge";
-import { SchemaLister } from "./SchemaLister";
+import { component } from "../../../framework";
+import { Table, Query } from "../../../types/types";
+import { QueryBuilderContext } from "../../../contexts/queryBuilderContext";
+import { DbNode } from "../../atomic/DbNode";
+import { CustomEdge }  from "../../atomic/CustomEdge";
+import { SchemaLister } from "../../atomic/SchemaLister";
 
 import "reactflow/dist/style.css";
 
@@ -32,22 +32,20 @@ const styles = {
   height: "100%",
 };
 
-type QueryBuilderChartProps = {
+type VisualQueryBuilderProps = {
   nodes: Node[];
   setNodes: Dispatch<SetStateAction<Node[]>>;
   edges: Edge[];
   setEdges: Dispatch<SetStateAction<Edge[]>>;
   editorQuery: string;
   setEditorQuery: Dispatch<SetStateAction<string>>;
-  queryLoading: boolean;
-  setQueryLoading: Dispatch<SetStateAction<boolean>>;
   query: Query;
   setQuery: Dispatch<SetStateAction<Query>>;
   tables: Table[];
   setTables: Dispatch<SetStateAction<Table[]>>;
 };
 
-export const QueryBuilderChart = component<QueryBuilderChartProps>(({ nodes, setNodes, edges, setEdges, editorQuery, setEditorQuery, queryLoading, setQueryLoading, query, setQuery, tables, setTables }) => {
+export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ nodes, setNodes, edges, setEdges, editorQuery, setEditorQuery, query, setQuery, tables, setTables }) => {
   const [action, setAction] = useState("");
 
   const getNode = (table: Table, index: number) => {
@@ -175,8 +173,6 @@ export const QueryBuilderChart = component<QueryBuilderChartProps>(({ nodes, set
         setTables: setTables,
         query: query,
         setQuery: setQuery,
-        queryLoading: queryLoading,
-        setQueryLoading: setQueryLoading,
         editorQuery: editorQuery,
         setEditorQuery: setEditorQuery,
       }}

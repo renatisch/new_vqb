@@ -73,8 +73,6 @@ export type QueryDialogContextProps = {
   setTables: Dispatch<SetStateAction<Table[]>>;
   query: Query;
   setQuery: Dispatch<SetStateAction<Query>>;
-  queryLoading: boolean;
-  setQueryLoading: Dispatch<SetStateAction<boolean>>;
 };
 
 export type FullyQualifiedTableName = {

@@ -5,7 +5,7 @@ import { explainMock } from "../constants/mocks/explainMock";
 import { QueryPayload, ValidateApiResponse } from "../types/api";
 import { axiosInstance } from "../logic";
 
-export const mockedEndpoints = {
+const mockedEndpoints = {
   queries: {
     async join(payload: any) {
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -26,11 +26,13 @@ export const mockedEndpoints = {
   }
 }
 
-export const endpoints = {
+const lifeEndpoints = {
   queries: {
     join: (payload: any) => axiosInstance.post<any>("/queries/join", payload).then(data => data.data),
     select: (payload: any) => axiosInstance.post("/queries/select", payload).then(data => data.data),
     validate: (payload: QueryPayload) => axiosInstance.post("/queries/validate", payload).then(data => data.data),
-    explain: (payload: any) => axiosInstance.post("/queries/explain", payload).then(data => data.data)
+    explain: (payload: QueryPayload) => axiosInstance.post("/queries/explain", payload).then(data => data.data)
   }
-}
+};
+
+export const endpoints = mockedEndpoints;

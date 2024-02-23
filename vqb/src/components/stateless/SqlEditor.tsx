@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { Dispatch, SetStateAction } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import Box from "@mui/material/Box";
 import { sql } from "@codemirror/lang-sql";
@@ -9,8 +9,8 @@ import { LoaderOverlay } from "./LoadingOverlay";
 
 interface SqlEditorProps {
   queryLoading: boolean;
-  query: string;
-  setQuery: Dispatch<SetStateAction<string>>;
+  query?: string;
+  setQuery: (value: string) => void;
 }
 
 export const SqlEditor = component<SqlEditorProps>(({ queryLoading, query, setQuery }) => {
