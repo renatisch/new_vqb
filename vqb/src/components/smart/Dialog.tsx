@@ -17,12 +17,14 @@ import { Query, Table } from "../../types/types";
 import { endpoints } from "../../utils/endpoints";
 import { QueryBuilderChart } from "../atomic/QueryBuilderChart";
 import { SqlEditorView } from "./SqlEditorView";
+import { TechnologySelector } from "../atomic/TechnologySelector";
 
 export const QueryBuilderDialog = component(() => {
   const [editorQuery, setEditorQuery] = useState("");
   const [queryLoading, setQueryLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(true);
   const [dialogView, setDialogView] = useState("vqb");
+  const [technology, setTechnology] = useState("Snowflake");
   // const selectQuery = useQuery(api.queries.select, selectQueryInput);
 
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -176,6 +178,16 @@ export const QueryBuilderDialog = component(() => {
               />
             </Box>
           </Grid>
+          {dialogView === "vqb" && (
+            <Grid item xs={12}>
+              <Box marginY={1}>
+                <TechnologySelector
+                  technology={technology}
+                  setTechnology={setTechnology}
+                />
+              </Box>
+            </Grid>
+          )}
           <Grid item xs={12}>
             {dialogView === "vqb" ? (
               <QueryBuilderChart
@@ -194,6 +206,7 @@ export const QueryBuilderDialog = component(() => {
               />
             ) : (
               <SqlEditorView
+                technology={technology}
                 queryLoading={queryLoading}
                 editorQuery={editorQuery}
                 setEditorQuery={setEditorQuery}
