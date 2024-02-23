@@ -5,6 +5,8 @@ from api_models import Payload, Technology, DBs, Query_to_Validate
 from tools.select_query_tool import select_query
 from tools.explain_query_tool import query_explain
 from tools.validate_query_tool import query_validate
+from tools.left_join_query_tool import left_join_query
+from tools.convert_query_tool import query_convert
 from fastapi.middleware.cors import CORSMiddleware
 import json
 
@@ -79,14 +81,7 @@ def get_select_query(data: Payload):
 
 @app.post("/queries/join")
 def get_join_query(data: DBs):
-    input = f"""Generate a LEFT JOIN query.\n
-            The query shall use {data.technology} specific SQL dialect\n
-            Left table to join on: {data.databases[0]}.{data.schemas[0]}.{data.tables[0]}. Right table to join on: {data.databases[1]}.{data.schemas[1]}.{data.tables[1]}\n
-            Left table column to join on: {data.left_table_column}. Right column to join on: {data.right_table_column}\n
-            The query shall return all collumns from both tables.
-            \n{{format_instructions}}
-    """
-    response = initial_queries_assistant(technology=data.technology, input=input)
+    response = left_join_query(objects=data)
     return response
 
 
@@ -99,6 +94,12 @@ def validate_query(query: Query_to_Validate):
 @app.post("/queries/explain")
 def explain_query(query: Query_to_Validate):
     response = query_explain(technology=query.technology, query=query.query)
+    return response
+
+
+@app.post("/queries/convert")
+def convert_query(query: Query_to_Validate):
+    response = query_convert(technology=query.technology, query=query.query)
     return response
 
 

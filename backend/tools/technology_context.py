@@ -33,10 +33,13 @@ technologies = {
                         Database: a grouping of schemas. It is a parent of schema objects.\n
                         Schema: a grouping of objects in a database.\n
                         It is a parent of tables.\n
-                        Table: a collection of rows and columns stored as data.\n""",
-        "schema": "database_id.schema_id.table_id",
+                        Table: a collection of rows and columns stored as data.\n
+                        database_id, schema_id and table_id objects MUST be inclosed within "" brackets as following: "<database_id>"."<schema_id>"."<table_id>"
+                        """,
+        "schema": """\"database_id"."schema_id"."table_id\"""",
         "examples": """
             SHOW TABLES in "<database_id>"."<schema_id>"\n
+            SELECT id, product_name, product_category FROM "<database_id>".<schema_id>"."<table_id>";\n
             SELECT * FROM "<database_id>"."<schema_id>"."<table_id>"\n""",
         "inputs": [
             {
@@ -64,6 +67,7 @@ technologies = {
         "schema": "project_id.schema_id.table_name",
         "examples": """
             SELECT schema_name FROM `<project_id>.INFORMATION_SCHEMA.SCHEMATA`;
+            SELECT * FROM `<project_id>.<schema_id>.<table_id>` LEFT JOIN ``<project_id>.<schema_id>.<table_id>` ON `<project_id>.<schema_id>.<table_id>`.column_id = <project_id>.<schema_id>.<table_id>`.column_id;
             SELECT column_name, data_type FROM `<project_id>.<schema_id>.INFORMATION_SCHEMA.COLUMNS` WHERE table_name = '<table_id>';
             SELECT * FROM `<project_id>.<schema_id>.<table_id>` LEFT JOIN `<project_id>.<schema_id>.<table_id>` ON '<schema_id>.<table_id>.<column_id>' = '<schema_id>.<table_id>.<column_id>';
         """,

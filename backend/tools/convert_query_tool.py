@@ -4,14 +4,12 @@ from handlers.handlers import ChatModelStartHandler
 from langchain.tools import StructuredTool
 from langchain_openai import OpenAI
 from tools.technology_context import technologies
-from models import IsQueryValid, Description
-from typing import List
-from api_models import DBs
+from models import SQLQuery
 
 
-def query_validate(technology: str, query: str):
-    user_input = f"""Validate if the following sql query conforms with {technology} SQL dialect.\n
-                    SQL query to validate: {query}
+def query_convert(technology: str, query: str):
+    user_input = f"""Convert the following sql query to SQL query conforming with {technology} SQL dialect.\n
+                    SQL query to convert: {query}
                  """
     ChatStartHandler = ChatModelStartHandler()
     model = OpenAI(
@@ -19,15 +17,13 @@ def query_validate(technology: str, query: str):
         temperature=0.0,
         callbacks=[ChatStartHandler],
     )
-    output_parser = StructuredOutputParser.from_response_schemas(
-        [IsQueryValid, Description]
-    )
+    output_parser = StructuredOutputParser.from_response_schemas([SQLQuery])
     response_format = output_parser.get_format_instructions()
     prompt = PromptTemplate(
         template="""
-        You are a SQL expert, your help users validate that SQL queries they provide conform with SQL dialects used by the following\n
+        You are a SQL expert, you help users convert SQL queries they provide to SQL queries conforming with SQL dialects used by one the following\n
         database technologies: Snowflake, Databricks, Google BigQuery.\n
-        When validating SQL queries, you MUST keep in mind the following key relationships between data objects in technologies:\n
+        When converting SQL queries, you MUST keep in mind the following key relationships between data objects in technologies:\n
         Relationships:\n
         {relationship}\n
 

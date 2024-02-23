@@ -1,1 +1,61 @@
-[{"technology": "Databricks", "queries": [{"query_type": "list_databases", "query": "SHOW CATALOGS;"}, {"query_type": "list_schemas", "query": "SHOW SCHEMAS in <catalog_id>;"}, {"query_type": "list_tables", "query": "SHOW TABLES in <catalog_id>.<schema_id>;"}, {"query_type": "describe_table", "query": "DESCRIBE TABLE <catalog_id>.<schema_id>.<table_id>;"}]}, {"technology": "Google_BigQuery", "queries": [{"query_type": "list_schemas", "query": "SELECT schema_name FROM `<project_id>.INFORMATION_SCHEMA.SCHEMATA`;"}, {"query_type": "list_tables", "query": "SELECT table_name FROM `<project_id>.<schema_id>.INFORMATION_SCHEMA.TABLES` WHERE table_schema = '<schema_id>';"}, {"query_type": "describe_table", "query": "SELECT * FROM `<project_id>.<schema_id>.<table_id>`;"}]}, {"technology": "Snowflake", "queries": [{"query_type": "list_databases", "query": "SHOW DATABASES;"}, {"query_type": "list_schemas", "query": "SHOW SCHEMAS in \"<database_id>\";"}, {"query_type": "list_tables", "query": "SHOW TABLES in \"<database_id>\".\"<schema_id>\";"}, {"query_type": "describe_table", "query": "DESCRIBE TABLE \"<database_id>\".\"<schema_id>\".\"<table_id>\";"}]}]
+[
+    {
+        "technology": "Databricks",
+        "queries": [
+            {
+                "query_type": "list_databases",
+                "query": "SHOW CATALOGS;"
+            },
+            {
+                "query_type": "list_schemas",
+                "query": "SHOW SCHEMAS in <catalog_id>;"
+            },
+            {
+                "query_type": "list_tables",
+                "query": "SHOW TABLES in <catalog_id>.<schema_id>;"
+            },
+            {
+                "query_type": "describe_table",
+                "query": "DESCRIBE TABLE <catalog_id>.<schema_id>.<table_id>;"
+            }
+        ]
+    },
+    {
+        "technology": "Google_BigQuery",
+        "queries": [
+            {
+                "query_type": "list_schemas",
+                "query": "SELECT schema_name FROM `<project_id>.INFORMATION_SCHEMA.SCHEMATA`;"
+            },
+            {
+                "query_type": "list_tables",
+                "query": "SELECT table_name FROM `<project_id>.<schema_id>.INFORMATION_SCHEMA.TABLES` WHERE table_schema = '<schema_id>';"
+            },
+            {
+                "query_type": "describe_table",
+                "query": "SELECT * FROM `<project_id>.<schema_id>.<table_id>`;"
+            }
+        ]
+    },
+    {
+        "technology": "Snowflake",
+        "queries": [
+            {
+                "query_type": "list_databases",
+                "query": "SHOW DATABASES;"
+            },
+            {
+                "query_type": "list_schemas",
+                "query": "SHOW SCHEMAS in \"<database_id>\";"
+            },
+            {
+                "query_type": "list_tables",
+                "query": "SHOW TABLES in \"<database_id>\".\"<schema_id>\";"
+            },
+            {
+                "query_type": "describe_table",
+                "query": "DESCRIBE TABLE \"<database_id>\".\"<schema_id>\".\"<table_id>\";"
+            }
+        ]
+    }
+]
