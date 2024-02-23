@@ -20,7 +20,6 @@ import { queryExamples } from "../../constants/querySamples";
 import { SqlEditor } from "../stateless/SqlEditor";
 import { SqlTooltip } from "../stateless/SqlTooltip";
 import { api } from "../../utils/api";
-import { QueryPayload } from "../../types/api";
 import { QueryStatus } from "../stateless/QueryStatus";
 
 const smartOptions = [
@@ -33,18 +32,19 @@ const smartOptions = [
 type SqlEditorProps = {
   queryLoading: boolean;
   editorQuery: string;
+  technology: string;
   setEditorQuery: Dispatch<SetStateAction<string>>;
 };
 
-export const SqlEditorView = component<SqlEditorProps>(({ editorQuery, setEditorQuery, queryLoading }) => {
-  const [validatedQuery, setValidatedQuery] = useState<QueryPayload>();
-  const [explainedQuery, setExplainedQuery] = useState<QueryPayload>();
-  const validationRequest = useQuery(api.validateQuery, validatedQuery);
-  const explanationRequest = useQuery(api.explainQuery, explainedQuery);
+export const SqlEditorView = component<SqlEditorProps>(({ technology, editorQuery, setEditorQuery, queryLoading }) => {
+  const [validatedQuery, setValidatedQuery] = useState<string>();
+  const [explainedQuery, setExplainedQuery] = useState<string>();
+  const validationRequest = useQuery(api.validateQuery, technology, validatedQuery);
+  const explanationRequest = useQuery(api.explainQuery, technology, explainedQuery);
 
   const handlePass = () => { };
-  const handleExplain = () => setExplainedQuery({ technology: "Snowflake", query: editorQuery });
-  const handleValidate = () => setValidatedQuery({ technology: "Snowflake", query: editorQuery });
+  const handleExplain = () => setExplainedQuery(editorQuery);
+  const handleValidate = () => setValidatedQuery(editorQuery);
 
   const handleSuggestionSelect = (query: string) => {
     const formattedQuery = format(query, { language: "snowflake" });
