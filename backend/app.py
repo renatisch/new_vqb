@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from llm import initial_queries_assistant
-from api_models import Payload, Technology, SQLQuery, DBs, Query_to_Validate
+from api_models import Payload, Technology, DBs, Query_to_Validate
 from tools.select_query_tool import select_query
 from tools.explain_query_tool import query_explain
 from tools.validate_query_tool import query_validate
 from fastapi.middleware.cors import CORSMiddleware
+import json
 
 load_dotenv(verbose=True, override=True)
 
@@ -40,7 +41,15 @@ def home():
 
 
 @app.get("/queries/initial")
-def get_initial_queries(technology: Technology) -> list:
+def get_initial_queries(technology: Technology):
+    queries = []
+    with open("initial_queries.json", "r") as data:
+        db = json.loads(data.read())
+        for each in db:
+            if each["technology"] == technology:
+                return each
+            else:
+                queries.append(each)
     input = """Perform the following tasks:\n
             1. Get all {technology} database objects required to perform a SELECT query;
             2. Get SQL queries for each database object;
@@ -50,11 +59,14 @@ def get_initial_queries(technology: Technology) -> list:
         "{technology}", technology
     )
     response = initial_queries_assistant(technology=technology, input=input)
+    queries.append(response.dict())
+    with open("initial_queries.json", "w") as file:
+        file.write(json.dumps(queries))
     return response
 
 
 @app.post("/queries/select")
-def get_select_query(data: Payload) -> SQLQuery:
+def get_select_query(data: Payload):
     response = select_query(
         technology=data.technology,
         database_name=data.database,

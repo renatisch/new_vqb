@@ -3,11 +3,13 @@ from langchain.output_parsers import (
 )
 from pydantic.v1 import BaseModel, Field
 from typing import List
-from enum import Enum
 
 
 SQLQuery = ResponseSchema(name="query", description="sql query.")
-QueryType = ResponseSchema(name="query_type", description="Query type.")
+QueryType = ResponseSchema(
+    name="query_type",
+    description="SQL query type. One of the following values: list_databases, list_schemas, list_tables, describe_table.",
+)
 Queries = ResponseSchema(name="queries", description="List of generated sql queries")
 IsQueryValid = ResponseSchema(
     name="is_query_valid", description="'valid' if query is valid. Otherwise, 'invalid'"

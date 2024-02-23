@@ -13,21 +13,29 @@ from tools.get_object_tool import get_object_tool
 from tools.describe_query_tool import describe_query_tool
 from tools.left_join_query_tool import left_join_query_tool
 from tools.select_query_tool import select_query_tool
-from tools.connect_db_tool import connect_db_tool
 from langchain_core.pydantic_v1 import BaseModel, Field
-from typing import Dict, List
+from typing import List
 from langchain.output_parsers.pydantic import PydanticOutputParser
+from enum import Enum
 
 
-class Response(BaseModel):
-    databases: List = Field(
-        description="List of database names retrieved from database."
-    )
-    queries: Dict = Field(description="List of requested queries")
+class QueryType(str, Enum):
+    list_databases = "list_databases"
+    list_schemas = "list_schemas"
+    list_tables = "list_tables"
+    descibe_table = "describe_table"
+
+
+class LlmResponseQuery(BaseModel):
+    query_type: QueryType = Field(description="Requested query type.")
+    query: str = Field(description="SQL query.")
 
 
 class Queries(BaseModel):
-    queries: Dict = Field(description="List of requested queries")
+    technology: str = Field(
+        description="Database technology for which queries have been requeted"
+    )
+    queries: List[LlmResponseQuery] = Field(description="List of queries.")
 
 
 def initial_queries_assistant(technology: str, input: str):

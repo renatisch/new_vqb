@@ -5,10 +5,10 @@ technologies = {
                         Database or schema: a grouping of objects in a catalog.\n
                         It is a parent of tables.\n
                         Table: a collection of rows and columns stored as data files in object storage.\n""",
-        "schema": "catalog_name.schema_name.object_name",
+        "schema": "catalog_id.schema_id.object_id",
         "examples": """
-            SHOW TABLES in <catalog_name>.<schema_name>\n
-            SELECT * FROM <catalog_name>.<schema_name>.<table_name>""",
+            SHOW TABLES in <catalog_id>.<schema_id>\n
+            SELECT * FROM <catalog_id>.<schema_id>.<table_id>""",
         "inputs": [
             {
                 "object": "catalog",
@@ -34,10 +34,10 @@ technologies = {
                         Schema: a grouping of objects in a database.\n
                         It is a parent of tables.\n
                         Table: a collection of rows and columns stored as data.\n""",
-        "schema": "database_name.schema_name.table_name",
+        "schema": "database_id.schema_id.table_id",
         "examples": """
-            SHOW TABLES in <database_name>.<schema_name>\n
-            SELECT * FROM <database_name>.<schema_name>.<table_name>""",
+            SHOW TABLES in <database_id>.<schema_id>\n
+            SELECT * FROM <database_id>.<schema_id>.<table_id>""",
         "inputs": [
             {
                 "object": "database",
@@ -64,8 +64,8 @@ technologies = {
         "schema": "project_id.schema_id.table_name",
         "examples": """
             SELECT schema_name FROM `<project_id>.INFORMATION_SCHEMA.SCHEMATA`;
-            SELECT column_name, data_type FROM `<schema_id>.INFORMATION_SCHEMA.COLUMNS` WHERE table_name = '<table_id>';
-            SELECT * FROM `<schema_id>.<table_id>` LEFT JOIN `<schema_id>.<table_id>` ON '<schema_id>.<table_id>.<column_id>' = '<schema_id>.<table_id>.<column_id>';
+            SELECT column_name, data_type FROM `<project_id>.<schema_id>.INFORMATION_SCHEMA.COLUMNS` WHERE table_name = '<table_id>';
+            SELECT * FROM `<project_id>.<schema_id>.<table_id>` LEFT JOIN `<project_id>.<schema_id>.<table_id>` ON '<schema_id>.<table_id>.<column_id>' = '<schema_id>.<table_id>.<column_id>';
         """,
         "inputs": [
             {
