@@ -27,7 +27,7 @@ type SqlEditorProps = {
 };
 
 export const SqlEditorView = component<SqlEditorProps>(({ tables, technology, query }) => {
-  const selectQuery = useQuery(api.getQuery, query, tables);
+  const selectQuery = useQuery(api.getQuery, query, tables, technology);
   const [editorQuery, setEditorQuery] = useStateDomain<string>(selectQuery.data, [selectQuery.data]);
   const [validatedQuery, setValidatedQuery] = useStateDomain<string>(undefined, [editorQuery]);
   const [explainedQuery, setExplainedQuery] = useStateDomain<string>(undefined, [editorQuery]);

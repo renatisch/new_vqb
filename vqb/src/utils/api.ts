@@ -2,7 +2,7 @@ import { Query, Table } from "../types/types";
 import { endpoints } from "./endpoints";
 
 export const api = {
-  async getQuery(queryObject: Query, tables: Table[]): Promise<string> {
+  async getQuery(queryObject: Query, tables: Table[], technology: string): Promise<string> {
     const formatTable = (table: Table) => {
       const columns = table.columns?.filter((column) => {
         return column.selected;
@@ -11,17 +11,16 @@ export const api = {
         return column.name;
       });
       return {
-        technology: "Snowflake",
+        technology,
         database: table.database,
         table_schema: table.schema,
         table: table.tableName,
         columns: selectedColumns,
       };
     };
-    const technology = "Snowflake";
     if (queryObject.action.length > 0) {
       const payload = {
-        technology: technology,
+        technology,
         join_type: "left",
         databases: [queryObject.primaryDatabase, queryObject.secondaryDatabase],
         schemas: [queryObject.primarySchema, queryObject.secondarySchema],
