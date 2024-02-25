@@ -11,7 +11,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { component } from "../../framework";
-import { ChartTable } from "../../types/types";
+import { ChartTable, Table } from "../../types/types";
 import { TreeProps } from "../../types/types";
 import { QueryBuilderContext } from "../../contexts/queryBuilderContext";
 import { TableView } from "../stateless/TableView";
@@ -40,17 +40,24 @@ export const DbNode = component<DbNodeProps>(({ data }) => {
         secondaryColumn: column,
       });
     }
-    tables.map((eachTable) => {
+    const newTables = tables.map<Table>((eachTable) => {
       if (eachTable.tableName === tableName) {
-        eachTable.columns?.map((each: TreeProps) => {
-          if (each.name === column) {
-            each.selected = !each.selected;
-          }
-        });
-        eachTable.expanded = true;
+        return {
+          ...eachTable,
+          columns: eachTable.columns?.map((each: TreeProps) => {
+            if (each.name === column) {
+              return { ...each, selected: !each.selected };
+            } else {
+              return each;
+            }
+          }),
+          expanded: true
+        };
+      } else {
+        return eachTable;
       }
     });
-    setTables(tables);
+    setTables(newTables);
   };
 
   return (

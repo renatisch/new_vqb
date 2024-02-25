@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import Box from "@mui/material/Box";
 import { sql } from "@codemirror/lang-sql";

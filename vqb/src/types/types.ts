@@ -9,6 +9,18 @@ export type Column = {
   selected: boolean;
 }
 
+export type ColumnQuery = {
+  name: string;
+  dataType: "integer" | "string" | "unknown";
+}
+
+export type TableQuery = {
+  dbName: string;
+  schemaName: string;
+  tableName: string;
+  columns: ColumnQuery[];
+}
+
 export type TreeProps = {
   id: string;
   name: string;

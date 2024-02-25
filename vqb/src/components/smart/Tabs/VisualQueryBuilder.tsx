@@ -4,11 +4,12 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
 import { component } from "../../../framework";
-import { Table, Query } from "../../../types/types";
+import { Table, Query, TableQuery } from "../../../types/types";
 import { QueryBuilderContext } from "../../../contexts/queryBuilderContext";
 import { DbNode } from "../../atomic/DbNode";
-import { CustomEdge }  from "../../atomic/CustomEdge";
+import { CustomEdge } from "../../atomic/CustomEdge";
 import { SchemaLister } from "../../atomic/SchemaLister";
+import { TechnologySelector } from "../../atomic/TechnologySelector";
 
 import "reactflow/dist/style.css";
 
@@ -33,20 +34,34 @@ const styles = {
 };
 
 type VisualQueryBuilderProps = {
-  nodes: Node[];
-  setNodes: Dispatch<SetStateAction<Node[]>>;
-  edges: Edge[];
-  setEdges: Dispatch<SetStateAction<Edge[]>>;
   editorQuery: string;
   setEditorQuery: Dispatch<SetStateAction<string>>;
   query: Query;
   setQuery: Dispatch<SetStateAction<Query>>;
   tables: Table[];
   setTables: Dispatch<SetStateAction<Table[]>>;
+  technology: string;
+  setTechnology: Dispatch<SetStateAction<string>>;
+  hidden: boolean;
 };
 
-export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ nodes, setNodes, edges, setEdges, editorQuery, setEditorQuery, query, setQuery, tables, setTables }) => {
+export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, editorQuery, setEditorQuery, query, setQuery, tables, setTables, technology, setTechnology }) => {
   const [action, setAction] = useState("");
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+
+  const onTableAdd = (tableQuery: TableQuery) => {
+    setTables([...tables, {
+      database: tableQuery.dbName,
+      schema: tableQuery.schemaName,
+      tableName: tableQuery.tableName,
+      columns: tableQuery.columns.map(column => ({
+        id: column.name,
+        name: column.name,
+        objectType: column.dataType
+      }))
+    }]);
+  }
 
   const getNode = (table: Table, index: number) => {
     return {
@@ -177,29 +192,36 @@ export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ nodes, s
         setEditorQuery: setEditorQuery,
       }}
     >
-      <Grid container spacing={2}>
-        <Grid item xs={9}>
-          <div style={{ height: 600, width: "100%" }}>
-            <ReactFlow
-              style={styles}
-              nodes={nodes}
-              edges={edges}
-              onNodesDelete={onNodesDelete}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              fitView
-              fitViewOptions={fitViewOptions}
-              defaultEdgeOptions={defaultEdgeOptions}
-              nodeTypes={nodeTypes}
-              edgeTypes={edgeTypes}
-            />
-          </div>
-        </Grid>
-        <Grid item xs={3}>
-          <Box height="100%" width="100%" className="vqb" bgcolor="white">
-            <SchemaLister />
+      <Grid container style={{ display: hidden ? 'none' : 'block' }}>
+        <Grid item xs={12}>
+          <Box marginY={1}>
+            <TechnologySelector technology={technology} setTechnology={setTechnology} />
           </Box>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={9}>
+            <div style={{ height: 600, width: "100%" }}>
+              <ReactFlow
+                style={styles}
+                nodes={nodes}
+                edges={edges}
+                onNodesDelete={onNodesDelete}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                fitView
+                fitViewOptions={fitViewOptions}
+                defaultEdgeOptions={defaultEdgeOptions}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+              />
+            </div>
+          </Grid>
+          <Grid item xs={3}>
+            <Box height="100%" width="100%" className="vqb" bgcolor="white">
+              <SchemaLister onTableAdd={onTableAdd} />
+            </Box>
+          </Grid>
         </Grid>
       </Grid>
     </QueryBuilderContext.Provider>

@@ -2,8 +2,11 @@ import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { TreeItem, TreeItemProps, treeItemClasses } from "@mui/x-tree-view/TreeItem";
+import CircularProgress from "@mui/material/CircularProgress";
+import { TreeView } from "@mui/x-tree-view/TreeView";
 
 import { component } from "../../framework";
+import { MinusSquare, PlusSquare } from "./icons";
 
 declare module "react" {
   interface CSSProperties {
@@ -20,6 +23,10 @@ type StyledTreeItemProps = TreeItemProps & {
   labelIcon: React.ReactElement;
   labelInfo?: string;
   labelText: string;
+  isLoadingChildren?: boolean;
+  controlIcon?: React.ReactElement;
+  noExpand?: boolean;
+  onNodeToggle?: (nodeIds: string[]) => void;
 };
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
@@ -54,7 +61,7 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   },
 }));
 
-export const SchemaListerTreeItem = component<StyledTreeItemProps>(({ bgColor, color, labelIcon: LabelIcon, labelInfo, labelText, colorForDarkMode, bgColorForDarkMode, ...other }) => {
+export const SchemaListerTreeItem = component<StyledTreeItemProps>(({ children, noExpand, bgColor, color, labelIcon: LabelIcon, labelInfo, labelText, colorForDarkMode, bgColorForDarkMode, isLoadingChildren, controlIcon, onNodeToggle, ...other }) => {
   const theme = useTheme();
 
   return (
@@ -67,6 +74,7 @@ export const SchemaListerTreeItem = component<StyledTreeItemProps>(({ bgColor, c
         <Typography variant="caption" color="inherit">
           {labelInfo}
         </Typography>
+        {isLoadingChildren ? <CircularProgress size={12} /> : controlIcon}
       </Box>
     }
       style={{
@@ -74,6 +82,12 @@ export const SchemaListerTreeItem = component<StyledTreeItemProps>(({ bgColor, c
         "--tree-view-bg-color": theme.palette.mode !== "dark" ? bgColor : bgColorForDarkMode,
       }}
       {...other}
-    />
+    >
+      {noExpand ? children :
+        <TreeView aria-label="customized" defaultCollapseIcon={<MinusSquare />} defaultExpandIcon={<PlusSquare />} onNodeToggle={(_: any, v) => onNodeToggle?.(v)}>
+          {children}
+        </TreeView>
+      }
+    </StyledTreeItemRoot>
   );
 });

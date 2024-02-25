@@ -1,68 +1,33 @@
-import { useContext } from "react";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import { TreeView } from "@mui/x-tree-view/TreeView";
+import { CircularProgress } from "@mui/material";
 
-import { component } from "../../framework";
+import { component, useQuery } from "../../framework";
 import { MinusSquare, PlusSquare } from "../stateless/icons";
-import { TableData } from "../../constants/data";
-import { FullyQualifiedTableName, FullTableName } from "../../types/types";
-import { QueryBuilderContext } from "../../contexts/queryBuilderContext";
-import { ListerTreeItem } from "../stateless/ListerTreeItem";
+import { api } from "../../utils/api";
+import { DbNode } from "../smart/Tree/DbNode";
 
-export const SchemaLister = component(() => {
-  const { tables, setTables } = useContext(QueryBuilderContext);
+export type SchemaListerProps = {
+  onTableAdd: (queryTable: any) => void;
+}
 
-  const handleSelectTable = ({ database, schema, tableName, columns, expanded }: FullTableName) => {
-    const uniqueTables = tables.filter((table) => {
-      if (table.tableName !== tableName) {
-        return table;
-      }
-    });
-    setTables([
-      ...uniqueTables,
-      {
-        database: database,
-        schema: schema,
-        tableName: tableName,
-        columns: columns,
-        expanded: expanded,
-      },
-    ]);
-  };
+export const SchemaLister = component<SchemaListerProps>(({ onTableAdd }) => {
+  const [expanded, setExpanded] = useState<string[]>([]);
+  const dbs = useQuery(api.getDbList);
 
-  const findSchemaAndDb = (tableName: string) => {
-    let QualifiedTableName: FullyQualifiedTableName = {};
-    TableData.forEach((db: any) => {
-      db.children.forEach((schema: any) => {
-        schema.children.forEach((tables: any) => {
-          if (tables.name === tableName) {
-            QualifiedTableName = {
-              databaseName: db.name,
-              schemaName: schema.name,
-              tableName: tableName,
-            };
-          }
-        });
-      });
-    });
-    return QualifiedTableName;
-  };
+  const handleToggle = (_: React.SyntheticEvent, nodeIds: string[]) => setExpanded(nodeIds);
+
+  if (dbs.isLoading) {
+    return <CircularProgress size={16} />;
+  }
 
   return (
     <Box sx={{ minHeight: 270, flexGrow: 1, maxWidth: 500, padding: 1 }}>
-      <TreeView
-        aria-label="customized"
-        defaultExpanded={["1"]}
-        defaultCollapseIcon={<MinusSquare />}
-        defaultExpandIcon={<PlusSquare />}
-        sx={{ overflowX: "hidden" }}
-      >
-        {TableData.map((db) => <ListerTreeItem
-          {...db}
-          key={db.id}
-          handleSelectTable={handleSelectTable}
-          findSchemaAndDb={findSchemaAndDb}
-        />)}
+      <TreeView aria-label="customized" defaultCollapseIcon={<MinusSquare />} defaultExpandIcon={<PlusSquare />} onNodeToggle={handleToggle}>
+        {dbs.data?.map(db =>
+          <DbNode key={db} dbName={db} isExpanded={expanded.includes(db)} onTableAdd={onTableAdd} />
+        )}
       </TreeView>
     </Box>
   );

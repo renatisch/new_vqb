@@ -6,17 +6,23 @@ import { component } from "../../framework";
 
 type SqlTooltipProps = {
   icon: ReactElement;
+  disabled: boolean;
   title: string;
   onClick: () => void;
 }
 
-export const SqlTooltip = component<SqlTooltipProps>(({ title, icon, onClick }) =>
-  <Tooltip title={title}>
-    <IconButton
-      sx={{ marginRight: 0 }}
-      onClick={onClick}
-    >
+export const SqlTooltip = component<SqlTooltipProps>(({ title, icon, onClick, disabled }) => {
+  if (disabled) {
+    <IconButton sx={{ marginRight: 0 }} disabled>
       {icon}
     </IconButton>
-  </Tooltip>
-);
+  }
+
+  return (
+    <Tooltip title={title}>
+      <IconButton sx={{ marginRight: 0 }} onClick={onClick}>
+        {icon}
+      </IconButton>
+    </Tooltip>
+  );
+});

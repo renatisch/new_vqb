@@ -1,5 +1,5 @@
 import { areArraysEqual } from "@mui/base";
-import React, { FunctionComponent, useCallback, useState, } from "react";
+import React, { FunctionComponent, useCallback, useRef, useState, } from "react";
 import { useQuery as useReactQuery, UseQueryResult } from "react-query";
 
 export function component<P extends object>(fc: FunctionComponent<P>) {
@@ -11,6 +11,16 @@ export type State<T> = [T, (val: T | undefined) => void];
 export type OptionalArray<T extends any[]> = {
   [K in keyof T]: T[K] | undefined;
 };
+
+export function useProp<T>(value: T | undefined): T | undefined;
+export function useProp<T>(value: T | undefined, initValue: T): T;
+export function useProp<T>(value: T | undefined, initValue = value): T | undefined {
+    const val = useRef(initValue);
+    if (value !== undefined) {
+        val.current = value;
+    }
+    return val.current;
+}
 
 export function useQuery<A extends any[], R>(fc: (...args: A) => Promise<R>, ...args: OptionalArray<A>): UseQueryResult<R> {
   return useReactQuery({

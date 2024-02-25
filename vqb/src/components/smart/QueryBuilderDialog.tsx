@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Node, Edge } from "reactflow";
 import Dialog from "@mui/material/Dialog";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
@@ -7,7 +6,8 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import Checkbox from "@mui/material/Checkbox";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import WebAssetIcon from "@mui/icons-material/WebAsset";
 import CloseIcon from "@mui/icons-material/Close";
@@ -16,16 +16,13 @@ import { component } from "../../framework";
 import { Query, Table } from "../../types/types";
 import { VisualQueryBuilder } from "./Tabs/VisualQueryBuilder";
 import { SqlEditorView } from "./Tabs/SqlEditorView";
-import { TechnologySelector } from "../atomic/TechnologySelector";
 
 export const QueryBuilderDialog = component(() => {
   const [editorQuery, setEditorQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(true);
-  const [dialogView, setDialogView] = useState("vqb");
+  const [content, setContent] = useState(0);
   const [technology, setTechnology] = useState("Snowflake");
   const [tables, setTables] = useState<Table[]>([]);
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
   const [query, setQuery] = useState<Query>({
     primaryDatabase: "",
     primarySchema: "",
@@ -37,12 +34,6 @@ export const QueryBuilderDialog = component(() => {
     secondaryColumn: "",
     action: "",
   });
-
-  const switchToSQLEditor = () => setDialogView("sql_editor");
-  const switchToVQB = () => {
-    setDialogView("vqb");
-    setEditorQuery("");
-  };
 
   return (
     <Dialog
@@ -69,81 +60,31 @@ export const QueryBuilderDialog = component(() => {
             </IconButton>
           </Box>
         </Box>
-        <Grid container padding={2}>
-          <Grid item xs={12} marginY={1}>
-            <Box display="flex">
-              <input className="winCl-btn" type="button" value="Tables" />
-              <input
-                className={
-                  dialogView === "vqb" ? "winCl-btn-active" : "winCl-btn"
-                }
-                type="button"
-                value="Visual Query Builder"
-                onClick={() => {
-                  switchToVQB();
-                }}
-              />
-              <input
-                className="winCl-btn"
-                type="button"
-                value="Stored Procedures"
-              />
-              <input
-                className={
-                  dialogView === "sql_editor" ? "winCl-btn-active" : "winCl-btn"
-                }
-                type="button"
-                value="SQL Editor"
-                onClick={switchToSQLEditor}
-              />
-            </Box>
-          </Grid>
-          {dialogView === "vqb" && (
-            <Grid item xs={12}>
-              <Box marginY={1}>
-                <TechnologySelector
-                  technology={technology}
-                  setTechnology={setTechnology}
-                />
-              </Box>
-            </Grid>
-          )}
-          <Grid item xs={12}>
-            {dialogView === "vqb" ? (
-              <VisualQueryBuilder
-                nodes={nodes}
-                edges={edges}
-                setNodes={setNodes}
-                setEdges={setEdges}
-                editorQuery={editorQuery}
-                setEditorQuery={setEditorQuery}
-                query={query}
-                setQuery={setQuery}
-                tables={tables}
-                setTables={setTables}
-              />
-            ) : (
-              <SqlEditorView
-                technology={technology}
-                query={query}
-                tables={tables}
-                setEditorQuery={setEditorQuery}
-              />
-            )}
+        <Grid container>
+          <Tabs value={content} onChange={(_, val) => setContent(val)} centered variant='fullWidth' style={{ width: '100%' }}>
+            <Tab label="Visual Query Builder" />
+            <Tab label="SQL Editor" />
+          </Tabs>
+          <Grid item xs={12} padding={2}>
+            <VisualQueryBuilder
+              hidden={content !== 0}
+              editorQuery={editorQuery}
+              setEditorQuery={setEditorQuery}
+              query={query}
+              setQuery={setQuery}
+              tables={tables}
+              setTables={setTables}
+              technology={technology}
+              setTechnology={setTechnology}
+            />
+            <SqlEditorView
+              hidden={content !== 1}
+              technology={technology}
+              query={query}
+              tables={tables}
+            />
           </Grid>
           <Grid item xs={12}>
-            {dialogView === "vqb" ? (
-              <Grid item xs={12}>
-                <Box display="flex" alignItems="center">
-                  <Checkbox />
-                  <Typography>Open Visual Query Builder by default</Typography>
-                </Box>
-              </Grid>
-            ) : dialogView === "sql_editor" ? (
-              <></>
-            ) : (
-              <></>
-            )}
             <Grid item xs={12}>
               <Box
                 display="flex"
