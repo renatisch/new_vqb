@@ -19,6 +19,7 @@ from enum import Enum
 
 
 class QueryType(str, Enum):
+    list_catalogs = "list_catalogs"
     list_projects = "list_projects"
     list_databases = "list_databases"
     list_schemas = "list_schemas"
