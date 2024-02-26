@@ -27,13 +27,6 @@ app.add_middleware(
 )
 
 
-@app.get("/queries/experimental")
-def get_object():
-    objects = list_objects("Google_BigQuery", query_type="SELECT")
-    print(objects)
-    return objects
-
-
 @app.get("/")
 def home():
     technology = "Databricks"
