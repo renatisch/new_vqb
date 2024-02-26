@@ -62,9 +62,9 @@ def get_initial_queries(technology: Technology):
         "{technology}", technology
     )
     response = initial_queries_assistant(technology=technology, input=input)
-    # queries.append(response.dict())
-    # with open("initial_queries.json", "w") as file:
-    #     file.write(json.dumps(queries))
+    queries.append(response.dict())
+    with open("initial_queries.json", "w") as file:
+        file.write(json.dumps(queries))
     return response
 
 
