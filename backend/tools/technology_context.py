@@ -61,12 +61,12 @@ technologies = {
     },
     "Google_BigQuery": {
         "instructions": """Google BigQuery:\n
-                        Projects: Project is grouping of schemas. It is a parent of schema objects. The list of projects can be retrieved from 'INFORMATION_SCHEMA.SCHEMATA'\n
+                        Projects: Project is grouping of schemas. It is a parent of schema objects. The list of projects can be retrieved from 'INFORMATION_SCHEMA.SCHEMATA'.\n
                         Schemas: Schemas is a grouping of tables tables. A schema is contained within a specific project. It is a parent object of tables.\n
                         Table: a collection of rows and columns stored as data.\n""",
         "schema": "project_id.schema_id.table_name",
         "examples": """
-            SELECT catalog_name as name FROM `INFORMATION_SCHEMA.SCHEMATA`;
+            SELECT catalog_name as name FROM `INFORMATION_SCHEMA.SCHEMATA` limit 1;
             SELECT schema_name FROM `<project_id>.INFORMATION_SCHEMA.SCHEMATA`;
             SELECT * FROM `<project_id>.<schema_id>.<table_id>` LEFT JOIN ``<project_id>.<schema_id>.<table_id>` ON `<project_id>.<schema_id>.<table_id>`.column_id = <project_id>.<schema_id>.<table_id>`.column_id;
             SELECT column_name, data_type FROM `<project_id>.<schema_id>.INFORMATION_SCHEMA.COLUMNS` WHERE table_name = '<table_id>';

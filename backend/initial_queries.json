@@ -21,27 +21,6 @@
         ]
     },
     {
-        "technology": "Google_BigQuery",
-        "queries": [
-            {
-                "query_type": "list_projects",
-                "query": "SELECT catalog_name as name FROM `INFORMATION_SCHEMA.SCHEMATA`;"
-            },
-            {
-                "query_type": "list_schemas",
-                "query": "SELECT schema_name FROM `<project_id>.INFORMATION_SCHEMA.SCHEMATA`;"
-            },
-            {
-                "query_type": "list_tables",
-                "query": "SELECT table_name FROM `<project_id>.<schema_id>.INFORMATION_SCHEMA.TABLES`;"
-            },
-            {
-                "query_type": "describe_table",
-                "query": "SELECT column_name, data_type FROM `<project_id>.<schema_id>.INFORMATION_SCHEMA.COLUMNS` WHERE table_name = '<table_id>';"
-            }
-        ]
-    },
-    {
         "technology": "Databricks",
         "queries": [
             {
