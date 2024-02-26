@@ -31,10 +31,19 @@ technologies = {
     "Snowflake": {
         "instructions": """Snowflake:\n
                         Database: a grouping of schemas. It is a parent of schema objects.\n
-                        Schema: a grouping of objects in a database. It is a parent of tables.\n
+                        Schema: a grouping of objects in a database.\n
+                        It is a parent of tables.\n
                         Table: a collection of rows and columns stored as data.\n
-                        database_id, schema_id and table_id objects MUST be inclosed within "" brackets as following: "<database_id>"."<schema_id>"."<table_id>"
                         """,
+        "rules": """
+            1. Database objects, e.g. database, schema, table, column in query MUST be enclosed within "" brackets as following: "<database_id>"."<schema_id>"."<table_id>"\n
+            2. Queries must have fully qualified names. The path to data shall include <database_id>.<schema_id>.<table_id>\n
+            3. Each database object: database, schema, table, column shall be inclosed within "" brackets\n
+
+            Valid query example: "SELECT \"col1\" FROM \"db1\".\"my_schema\".\"users\" LEFT JOIN \"db1\".\"my_schema\".\"orders\" ON \"db1\".\"my_schema\".\"users\"."\vendor_id\" = \"db1\".\"my_schema\".\"orders\"."\vendor_id\";\n
+            Invalid query example: "SELECT col1 FROM db1.my_schema.users LEFT JOIN \"db1\".\"my_schema\".\"orders\" ON \"db1\".\"my_schema\".\"users\".vendor_id = \"db1\".\"my_schema\".\"orders\"."\vendor_id\";
+
+        """,
         "schema": """\"database_id"."schema_id"."table_id\"""",
         "examples": """
             SHOW TABLES in "<database_id>"."<schema_id>"\n
@@ -61,22 +70,16 @@ technologies = {
     },
     "Google_BigQuery": {
         "instructions": """Google BigQuery:\n
-                        Projects: Project is grouping of schemas. It is a parent of schema objects. The list of projects can be retrieved from 'INFORMATION_SCHEMA.SCHEMATA'\n
-                        Schemas: Schemas is a grouping of tables tables. A schema is contained within a specific project. It is a parent object of tables.\n
+                        Schemas: Schemas are top-level containers that are used to organize tables. A schema is contained within a specific project. It is a parent of tables.\n
                         Table: a collection of rows and columns stored as data.\n""",
         "schema": "project_id.schema_id.table_name",
         "examples": """
-            SELECT catalog_name as name FROM `INFORMATION_SCHEMA.SCHEMATA`;
             SELECT schema_name FROM `<project_id>.INFORMATION_SCHEMA.SCHEMATA`;
             SELECT * FROM `<project_id>.<schema_id>.<table_id>` LEFT JOIN ``<project_id>.<schema_id>.<table_id>` ON `<project_id>.<schema_id>.<table_id>`.column_id = <project_id>.<schema_id>.<table_id>`.column_id;
             SELECT column_name, data_type FROM `<project_id>.<schema_id>.INFORMATION_SCHEMA.COLUMNS` WHERE table_name = '<table_id>';
             SELECT * FROM `<project_id>.<schema_id>.<table_id>` LEFT JOIN `<project_id>.<schema_id>.<table_id>` ON '<schema_id>.<table_id>.<column_id>' = '<schema_id>.<table_id>.<column_id>';
         """,
         "inputs": [
-            {
-                "object": "project",
-                "input": "Generate a SQL statement listing all projects within a {technology} account",
-            },
             {
                 "object": "schema",
                 "input": "Generate a SQL statement listing all schemas within a {technology} project",

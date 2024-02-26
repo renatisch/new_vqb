@@ -7,6 +7,7 @@ from tools.explain_query_tool import query_explain
 from tools.validate_query_tool import query_validate
 from tools.left_join_query_tool import left_join_query
 from tools.convert_query_tool import query_convert
+from tools.list_objects_tool import list_objects
 from fastapi.middleware.cors import CORSMiddleware
 import json
 
@@ -24,6 +25,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/queries/experimental")
+def get_object():
+    objects = list_objects("Google_BigQuery", query_type="SELECT")
+    print(objects)
+    return objects
 
 
 @app.get("/")
@@ -53,8 +61,8 @@ def get_initial_queries(technology: Technology):
             else:
                 queries.append(each)
     input = """Perform the following tasks:\n
-            1. Get all {technology} database objects required to perform a SELECT query;
-            2. Get SQL queries for each database object;
+            1. Get all {technology} database objects required to generate a SELECT query;
+            2. Get SQL queries for each database object from step 1;
             3. Get describe query for specified technology\n
             \n{format_instructions}"
     """.replace(

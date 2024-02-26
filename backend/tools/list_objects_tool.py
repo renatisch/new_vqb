@@ -21,7 +21,7 @@ objects = {
     "Google_BigQuery": [
         {
             "query_type": "SELECT",
-            "objects": ["schema", "table"],
+            "objects": ["project", "schema", "table"],
         },
     ],
 }

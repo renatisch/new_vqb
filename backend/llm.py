@@ -19,6 +19,7 @@ from enum import Enum
 
 
 class QueryType(str, Enum):
+    list_projects = "list_projects"
     list_databases = "list_databases"
     list_schemas = "list_schemas"
     list_tables = "list_tables"
@@ -60,7 +61,7 @@ def initial_queries_assistant(technology: str, input: str):
                     to complete required task.\n
                     Next, use 'get_object_tool' to generate queries for resulting object.\n
                     Repeat the process for each database object\n
-                    Do not make any assumptions about SQL queries, Instead, ONLY use functions available to you to complete required tasks.
+                    Do not make any assumptions about SQL queries, Instead, ONLY use functions available to you to complete required tasks.\n
 
                     TOOLS:
                     ------
