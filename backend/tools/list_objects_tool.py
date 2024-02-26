@@ -9,7 +9,7 @@ objects = {
     "Databricks": [
         {
             "query_type": "SELECT",
-            "objects": ["catalog", "schema", "table"],
+            "objects": ["database", "schema", "table"],
         },
     ],
     "Snowflake": [
@@ -21,7 +21,7 @@ objects = {
     "Google_BigQuery": [
         {
             "query_type": "SELECT",
-            "objects": ["project", "schema", "table"],
+            "objects": ["database", "schema", "table"],
         },
     ],
 }

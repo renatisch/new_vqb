@@ -1,22 +1,21 @@
 technologies = {
     "Databricks": {
         "instructions": """Databricks:\n
-                        Catalog: a grouping of databases. It is a parent of database or schema objects.\n
-                        Database or schema: a grouping of objects in a catalog.\n
-                        It is a parent of tables.\n
-                        Table: a collection of rows and columns stored as data files in object storage.\n""",
-        "schema": "catalog_id.schema_id.object_id",
+                        Database: a grouping of schemas. It is a parent of schema objects.\n
+                        Schema: a grouping of objects in a database. It is a parent of tables.\n
+                        Table: a collection of rows and columns stored as data.\n""",
+        "schema": "database_id.schema_id.table_id",
         "examples": """
-            SHOW TABLES in <catalog_id>.<schema_id>\n
-            SELECT * FROM <catalog_id>.<schema_id>.<table_id>""",
+            SHOW TABLES in <database_id>.<schema_id>\n
+            SELECT * FROM <database_id>.<schema_id>.<table_id>""",
         "inputs": [
             {
-                "object": "catalog",
-                "input": "Generate a SQL query to list catalogs in my {technology} account.",
+                "object": "database",
+                "input": "Generate a SQL query to list databases in my {technology} account.",
             },
             {
                 "object": "schema",
-                "input": "Generate a SQL statement listing schemas within a {technology} catalog",
+                "input": "Generate a SQL statement listing schemas within a {technology} database.",
             },
             {
                 "object": "table",
@@ -24,7 +23,7 @@ technologies = {
             },
             {
                 "object": "describe",
-                "input": "Generate a SQL statement describing a single table within a {technology} schema",
+                "input": "Generate a SQL statement describing a single table within a {technology} schema.",
             },
         ],
     },
@@ -61,25 +60,25 @@ technologies = {
     },
     "Google_BigQuery": {
         "instructions": """Google BigQuery:\n
-                        Projects: Project is grouping of schemas. It is a parent of schema objects. The list of projects can be retrieved from 'INFORMATION_SCHEMA.SCHEMATA'.\n
-                        Schemas: Schemas is a grouping of tables tables. A schema is contained within a specific project. It is a parent object of tables.\n
+                        Database: Database also know as catalogs is grouping of schemas. It is a parent of schema objects. The list of databases can be retrieved from 'INFORMATION_SCHEMA.SCHEMATA'. Always limit result to 1.\n
+                        Schemas: Schemas is a grouping of tables tables. A schema is contained within a specific database. It is a parent object of tables.\n
                         Table: a collection of rows and columns stored as data.\n""",
-        "schema": "project_id.schema_id.table_name",
+        "schema": "database_id.schema_id.table_id",
         "examples": """
-            SELECT catalog_name as name FROM `INFORMATION_SCHEMA.SCHEMATA` limit 1;
-            SELECT schema_name FROM `<project_id>.INFORMATION_SCHEMA.SCHEMATA`;
-            SELECT * FROM `<project_id>.<schema_id>.<table_id>` LEFT JOIN ``<project_id>.<schema_id>.<table_id>` ON `<project_id>.<schema_id>.<table_id>`.column_id = <project_id>.<schema_id>.<table_id>`.column_id;
-            SELECT column_name, data_type FROM `<project_id>.<schema_id>.INFORMATION_SCHEMA.COLUMNS` WHERE table_name = '<table_id>';
-            SELECT * FROM `<project_id>.<schema_id>.<table_id>` LEFT JOIN `<project_id>.<schema_id>.<table_id>` ON '<schema_id>.<table_id>.<column_id>' = '<schema_id>.<table_id>.<column_id>';
+            SELECT catalog_name as database FROM `INFORMATION_SCHEMA.SCHEMATA` limit 1;\n
+            SELECT schema_name FROM `<database_id>.INFORMATION_SCHEMA.SCHEMATA`;\n
+            SELECT column_name, data_type FROM `<database_id>.<schema_id>.INFORMATION_SCHEMA.COLUMNS` WHERE table_name = '<table_id>';\n
+            SELECT * FROM `<database_id>.<schema_id>.<table_id>` LEFT JOIN `<database_id>.<schema_id>.<table_id>` ON `<database_id>.<schema_id>.<table_id>`.column_id = <database_id>.<schema_id>.<table_id>`.column_id;\n
+            SELECT * FROM `<database_id>.<schema_id>.<table_id>` LEFT JOIN `<database_id>.<schema_id>.<table_id>` ON '<schema_id>.<table_id>.<column_id>' = '<schema_id>.<table_id>.<column_id>';\n
         """,
         "inputs": [
             {
-                "object": "project",
-                "input": "Generate a SQL statement listing all projects within a {technology} account",
+                "object": "database",
+                "input": "Generate a SQL statement listing all databases within a {technology} account",
             },
             {
                 "object": "schema",
-                "input": "Generate a SQL statement listing all schemas within a {technology} project",
+                "input": "Generate a SQL statement listing all schemas within a {technology} database",
             },
             {
                 "object": "table",
@@ -87,7 +86,7 @@ technologies = {
             },
             {
                 "object": "describe",
-                "input": "Generate a SQL statement describing a single table within a {technology} schema",
+                "input": "Generate a SQL statement describing a single table within a {technology} schema. You need to retrieve column name and datatype.",
             },
         ],
     },
