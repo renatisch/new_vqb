@@ -8,15 +8,15 @@ import Typography from '@mui/material/Typography';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
 import { component, useQuery, useStateDomain } from "../../../framework";
+import { Query, Table } from "../../../types/types";
 import { queryExamples } from "../../../constants/querySamples";
+import { api } from "../../../utils/api";
+import { utils } from "../../../utils/utils";
 import { SqlEditor } from "../../stateless/SqlEditor";
 import { SqlTooltip } from "../../stateless/SqlTooltip";
 import { QueryStatus } from "../../stateless/QueryStatus";
 import { QuerySuggestion } from "../../stateless/QuerySuggestion";
 import { ActionButtons } from "../../stateless/ActionButtons";
-import { Query, Table } from "../../../types/types";
-import { api } from "../../../utils/api";
-import { utils } from "../../../utils/utils";
 
 type SqlEditorProps = {
   hidden?: boolean;

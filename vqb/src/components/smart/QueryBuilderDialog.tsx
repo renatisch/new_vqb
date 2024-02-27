@@ -6,9 +6,9 @@ import Tab from "@mui/material/Tab";
 
 import { component, useQuery } from "../../framework";
 import { Query, Table } from "../../types/types";
+import { api } from "../../utils/api";
 import { VisualQueryBuilder } from "./Tabs/VisualQueryBuilder";
 import { SqlEditorView } from "./Tabs/SqlEditorView";
-import { api } from "../../utils/api";
 
 export const QueryBuilderDialog = component(() => {
   const [editorQuery, setEditorQuery] = useState("");
@@ -26,8 +26,7 @@ export const QueryBuilderDialog = component(() => {
     action: "",
   });
 
-  const technology = useQuery(api.getTechnology);
-  useQuery(api.getInitialQueries, technology.data);
+  const initialData = useQuery(api.getInitialData);
 
   return (
       <Paper sx={{ background: "#f5f8fc", height: 700, width: "100%", overflow: 'auto' }}>
@@ -45,10 +44,11 @@ export const QueryBuilderDialog = component(() => {
               setQuery={setQuery}
               tables={tables}
               setTables={setTables}
+              databases={initialData.data?.databases}
             />
             <SqlEditorView
               hidden={content !== 1}
-              technology={technology.data}
+              technology={initialData.data?.technology}
               query={query}
               tables={tables}
             />

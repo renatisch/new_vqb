@@ -9,7 +9,6 @@ import { QueryBuilderContext } from "../../../contexts/queryBuilderContext";
 import { DbNode } from "../../atomic/DbNode";
 import { CustomEdge } from "../../atomic/CustomEdge";
 import { SchemaLister } from "../../atomic/SchemaLister";
-import { TechnologySelector } from "../../atomic/TechnologySelector";
 import { ActionButtons } from "../../stateless/ActionButtons";
 
 import "reactflow/dist/style.css";
@@ -42,9 +41,10 @@ type VisualQueryBuilderProps = {
   tables: Table[];
   setTables: Dispatch<SetStateAction<Table[]>>;
   hidden: boolean;
+  databases: string[] | undefined;
 };
 
-export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, editorQuery, setEditorQuery, query, setQuery, tables, setTables }) => {
+export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, editorQuery, setEditorQuery, query, setQuery, tables, setTables, databases }) => {
   const [action, setAction] = useState("");
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -214,7 +214,7 @@ export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, 
         </Grid>
         <Grid item xs={3}>
           <Box height="100%" width="100%" className="vqb" bgcolor="white">
-            <SchemaLister onTableAdd={onTableAdd} />
+            <SchemaLister onTableAdd={onTableAdd} databases={databases} />
           </Box>
         </Grid>
       </Grid>

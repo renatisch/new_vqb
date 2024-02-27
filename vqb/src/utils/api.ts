@@ -1,28 +1,42 @@
+import { columnsMock } from "../constants/mocks/columnMock";
 import { ColumnQuery, DbQueryList, Query, Table } from "../types/types";
 import { endpoints } from "./endpoints";
 
+type InitialData = {
+  technology: string;
+  databases: string[];
+}
+
 export const api = {
+  async getInitialData(): Promise<InitialData> {
+    let technology: string;
+    if (window.hostFunctions) {
+      technology = await window.hostFunctions.getTechnology();
+    } else {
+      technology = "Snowflake";
+    }
+    const initialQueries = await endpoints.queries.initial({ technology });
+    await window.hostFunctions?.setQueries(initialQueries);
+    let databases: string[];
+    if (window.hostFunctions) {
+      databases = await window.hostFunctions.getDbList();
+    } else {
+      databases = ["DB 1"];
+    }
+    return { technology, databases };
+  },
+
   async setQueries(dbQueries: DbQueryList) {
     if (window.hostFunctions) {
       return await window.hostFunctions.setQueries(dbQueries);
     }
-
     await new Promise(resolve => setTimeout(resolve, 1000));
-  },
-  async getDbList(): Promise<string[]> {
-    if (window.hostFunctions) {
-      return window.hostFunctions.getDbList();
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return ["DB 1", "DB 2"];
   },
 
   async getSchemaList(dbName: string): Promise<string[]> {
     if (window.hostFunctions) {
       return window.hostFunctions.getSchemas(dbName);
     }
-
     await new Promise(resolve => setTimeout(resolve, 1000));
     return ["renats_schema"];
   },
@@ -31,74 +45,16 @@ export const api = {
     if (window.hostFunctions) {
       return window.hostFunctions.getTables(dbName, schemaName);
     }
-
     await new Promise(resolve => setTimeout(resolve, 1000));
     return ["Orders", "Payments"];
-  },
-
-  async getInitialQueries(technology: string) {
-    const initialQueries = await endpoints.queries.initial({ technology });
-    await window.hostFunctions?.setQueries(initialQueries);
-    return initialQueries;
-  },
-
-  async getTechnology() {
-    if (window.hostFunctions) {
-      return window.hostFunctions.getTechnology();
-    }
-
-    return "Snowflake";
   },
 
   async getColumnList(dbName: string, schemaName: string, tableName: string): Promise<ColumnQuery[]> {
     if (window.hostFunctions) {
       return window.hostFunctions.getColumns(dbName, schemaName, tableName);
     }
-
     await new Promise(resolve => setTimeout(resolve, 1000));
-    if (tableName === "Orders") {
-      return [
-        {
-          name: "id",
-          dataType: "integer",
-        },
-        {
-          name: "product_name",
-          dataType: "string",
-        },
-        {
-          name: "product_category",
-          dataType: "string",
-        },
-        {
-          name: "product_price",
-          dataType: "integer",
-        },
-        {
-          name: "order_type",
-          dataType: "string",
-        },
-      ];
-    }
-
-    return [
-      {
-        name: "order_id",
-        dataType: "integer",
-      },
-      {
-        name: "payment_type",
-        dataType: "string",
-      },
-      {
-        name: "product",
-        dataType: "string",
-      },
-      {
-        name: "delivery_address",
-        dataType: "string",
-      },
-    ];
+    return columnsMock.find(t => t.tableName === tableName)?.columns || [];
   },
 
   async getQuery(queryObject: Query, tables: Table[], technology: string): Promise<string> {
