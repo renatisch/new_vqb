@@ -50,4 +50,4 @@ const lifeEndpoints = {
   }
 };
 
-export const endpoints = mockedEndpoints;
+export const endpoints = lifeEndpoints;
