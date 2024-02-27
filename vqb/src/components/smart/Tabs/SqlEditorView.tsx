@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { format } from "sql-formatter";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import WbIncandescentOutlinedIcon from "@mui/icons-material/WbIncandescentOutlined";
 import LoopOutlinedIcon from "@mui/icons-material/LoopOutlined";
@@ -17,6 +16,7 @@ import { QuerySuggestion } from "../../stateless/QuerySuggestion";
 import { ActionButtons } from "../../stateless/ActionButtons";
 import { Query, Table } from "../../../types/types";
 import { api } from "../../../utils/api";
+import { utils } from "../../../utils/utils";
 
 type SqlEditorProps = {
   hidden?: boolean;
@@ -27,8 +27,9 @@ type SqlEditorProps = {
 
 export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, technology, query }) => {
   const [usedQuery, setUsedQuery] = useStateDomain<Query>(undefined, [query, technology, tables]);
-  const selectQuery = useQuery(api.getQuery, usedQuery, tables, technology);
-  const [editorQuery, setEditorQuery] = useStateDomain<string>(selectQuery.data, [selectQuery.data]);
+  const generatedQuery = useQuery(api.getQuery, usedQuery, tables, technology);
+  const formattedGeneratedQuery = generatedQuery.data && utils.formatSqlQuery(generatedQuery.data);
+  const [editorQuery, setEditorQuery] = useStateDomain<string>(formattedGeneratedQuery, [formattedGeneratedQuery]);
   const [validatedQuery, setValidatedQuery] = useStateDomain<string>(undefined, [editorQuery]);
   const [explainedQuery, setExplainedQuery] = useStateDomain<string>(undefined, [editorQuery]);
   const [convertedQuery, setConvertedQuery] = useStateDomain<string>(undefined, [editorQuery]);
@@ -38,14 +39,11 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, techno
   const isEmptyQuery = !editorQuery || editorQuery === "";
   const convertionResult = convertionRequest.data;
 
-  const handleSuggestionSelect = (query: string) => {
-    const formattedQuery = format(query, { language: "snowflake" });
-    setEditorQuery(formattedQuery);
-  };
+  const setFormattedEditorQuery = (query: string) => setEditorQuery(utils.formatSqlQuery(query));
 
   useEffect(() => {
     if (convertionResult) {
-      setEditorQuery(convertionResult);
+      setFormattedEditorQuery(convertionResult);
     }
   }, [convertionResult]);
 
@@ -54,7 +52,7 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, techno
       <Button variant="contained" sx={{ height: 30, marginRight: 2 }} onClick={() => setUsedQuery(query)}>
         Generate query
       </Button>
-      <SqlEditor query={editorQuery} queryLoading={selectQuery.isLoading} setQuery={setEditorQuery} />
+      <SqlEditor query={editorQuery} queryLoading={generatedQuery.isLoading} setQuery={setFormattedEditorQuery} />
       <Box
         height={20}
         marginTop={1}
@@ -88,7 +86,7 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, techno
           Query suggestions:
         </Typography>
         {queryExamples.map(({ query }, i) =>
-          <QuerySuggestion key={i} query={query} onClick={() => handleSuggestionSelect(query)} />)}
+          <QuerySuggestion key={i} query={query} onClick={() => setFormattedEditorQuery(query)} />)}
       </Box>
       <ActionButtons onConfirm={!isEmptyQuery ? () => window.hostFunctions?.onOk(editorQuery) : undefined}/>
     </Box>
