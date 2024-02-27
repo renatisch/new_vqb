@@ -56,39 +56,40 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, techno
       <Box
         height={20}
         marginTop={1}
+        marginBottom={1}
         marginRight={0.5}
         display="flex"
         alignItems="center"
         justifyContent="end"
       >
         <ButtonGroup>
-          <SqlTooltip disabled={isEmptyQuery} title='Validate' onClick={() => setValidatedQuery(editorQuery)} icon={<CheckCircleOutlineOutlinedIcon />} />
-          <SqlTooltip disabled={isEmptyQuery} title='Explain' onClick={() => setExplainedQuery(editorQuery)} icon={<WbIncandescentOutlinedIcon />} />
-          <SqlTooltip disabled={isEmptyQuery} title={`Convert to ${technology} format`} onClick={() => setConvertedQuery(editorQuery)} icon={<LoopOutlinedIcon />} />
+          <SqlTooltip isLoading={validationRequest.isLoading} disabled={isEmptyQuery} title='Validate' onClick={() => setValidatedQuery(editorQuery)} icon={<CheckCircleOutlineOutlinedIcon />} />
+          <SqlTooltip isLoading={explanationRequest.isLoading} disabled={isEmptyQuery} title='Explain' onClick={() => setExplainedQuery(editorQuery)} icon={<WbIncandescentOutlinedIcon />} />
+          <SqlTooltip isLoading={convertionRequest.isLoading} disabled={isEmptyQuery} title={`Convert to ${technology} format`} onClick={() => setConvertedQuery(editorQuery)} icon={<LoopOutlinedIcon />} />
         </ButtonGroup>
       </Box>
-
-      <QueryStatus
-        status={validationRequest.status}
-        message={validationRequest.data || "Query is Valid"}
-        severity={validationRequest.data ? "error" : "success"}
-      />
-      <QueryStatus
-        status={explanationRequest.status}
-        message={explanationRequest.data}
-        severity="info"
-      />
-      <QueryStatus
-        status={convertionRequest.status}
-      />
+      <Box height={130}>
+        <QueryStatus
+          status={validationRequest.status}
+          message={validationRequest.data || "Query is Valid"}
+          severity={validationRequest.data ? "error" : "success"}
+        />
+        <QueryStatus
+          status={explanationRequest.status}
+          message={explanationRequest.data}
+          severity="info"
+        />
+      </Box>
       <Box display="flex" flexDirection="column" marginTop={0.5}>
-        <Typography fontSize={15} fontWeight={550} marginBottom={1}>
+        <Typography fontSize={15} fontWeight={550} marginTop={2}>
           Query suggestions:
         </Typography>
-        {queryExamples.map(({ query }, i) =>
-          <QuerySuggestion key={i} query={query} onClick={() => setFormattedEditorQuery(query)} />)}
+        <Box>
+          {queryExamples.map(({ query }, i) =>
+            <QuerySuggestion key={i} query={query} onClick={() => setFormattedEditorQuery(query)} />)}
+        </Box>
       </Box>
-      <ActionButtons onConfirm={!isEmptyQuery ? () => window.hostFunctions?.onOk(editorQuery) : undefined}/>
+      <ActionButtons onConfirm={!isEmptyQuery ? () => window.hostFunctions?.onOk(editorQuery) : undefined} />
     </Box>
   );
 });

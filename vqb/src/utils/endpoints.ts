@@ -27,7 +27,7 @@ const mockedEndpoints = {
       await new Promise(resolve => setTimeout(resolve, 1000));
       return { query: "string" };
     },
-    async initial(technology: string) {
+    async initial(payload: InitalQueryPayload) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       return {} as any;
     }
@@ -50,4 +50,4 @@ const lifeEndpoints = {
   }
 };
 
-export const endpoints = lifeEndpoints;
+export const endpoints = mockedEndpoints;

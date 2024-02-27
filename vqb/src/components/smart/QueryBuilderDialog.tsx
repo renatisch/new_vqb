@@ -29,7 +29,7 @@ export const QueryBuilderDialog = component(() => {
   const initialData = useQuery(api.getInitialData);
 
   return (
-      <Paper sx={{ background: "#f5f8fc", height: 700, width: "100%", overflow: 'auto' }}>
+      <Paper sx={{ background: "#f5f8fc", height: 800, width: "100%", overflow: 'auto' }}>
         <Grid container>
           <Tabs value={content} onChange={(_, val) => setContent(val)} centered variant='fullWidth' style={{ width: '100%', background: '#e3eaf3' }}>
             <Tab label="Visual Query Builder" />
