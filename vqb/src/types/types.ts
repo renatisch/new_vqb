@@ -1,6 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
 import { Node, Edge } from "reactflow";
 
+export type InitialState = {
+  technology: string;
+  query: string;
+}
+
 export type DbQuery = {
   query_type: string;
   query: string;
