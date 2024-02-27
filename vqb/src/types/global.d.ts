@@ -1,7 +1,7 @@
-import { ColumnQuery, DbQueryList } from "./types";
+import { ColumnQuery, DbQueryList, InitialState } from "./types";
 
 interface HostFunctions {
-  getTechnology: () => Promise<string>;
+  getInitialState: () => Promise<InitialState>;
   getDbList: () => Promise<string[]>;
   getSchemas: (dbName: string) => Promise<string[]>;
   getTables: (dbName: string, schmaName: string) => Promise<string[]>;

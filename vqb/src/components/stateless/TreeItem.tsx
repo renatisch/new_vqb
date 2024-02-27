@@ -33,7 +33,7 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   color: theme.palette.text.secondary,
   [`& .${treeItemClasses.content}`]: {
     color: theme.palette.text.secondary,
-    borderRadius: theme.spacing(2),
+    borderRadius: theme.spacing(0.5),
     paddingRight: theme.spacing(1),
     fontWeight: theme.typography.fontWeightMedium,
     "&.Mui-expanded": {
@@ -43,7 +43,7 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
       backgroundColor: theme.palette.action.hover,
     },
     "&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused": {
-      backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+      backgroundColor: '#f5f8fc',
       color: "var(--tree-view-color)",
     },
     [`& .${treeItemClasses.label}`]: {
@@ -52,11 +52,8 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
     },
   },
   [`& .${treeItemClasses.group}`]: {
-    marginLeft: 5,
-    paddingTop: 5,
-    [`& .${treeItemClasses.content}`]: {
-      paddingLeft: theme.spacing(2),
-    },
+    marginLeft: 24,
+    paddingTop: 0,
   },
 }));
 

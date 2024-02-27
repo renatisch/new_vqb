@@ -4,11 +4,7 @@ import { validateMock } from "../constants/mocks/validateMock";
 import { explainMock } from "../constants/mocks/explainMock";
 import { InitalQueryPayload, QueryObject, QueryPayload, ValidateApiResponse } from "../types/api";
 import { axiosInstance } from "../logic";
-
-type InitialQueryResponse = {
-  technology: string;
-  queries: QueryObject[];
-}
+import { DbQueryList } from "../types/types";
 
 const lifeEndpoints = {
   queries: {
@@ -17,7 +13,7 @@ const lifeEndpoints = {
     validate: (payload: QueryPayload) => axiosInstance.post("/queries/validate", payload).then(data => data.data),
     explain: (payload: QueryPayload) => axiosInstance.post("/queries/explain", payload).then(data => data.data),
     convert: (payload: QueryPayload) => axiosInstance.post("/queries/convert", payload).then(data => data.data),
-    initial: (payload: InitalQueryPayload) => axiosInstance.get("/queries/initial", { params: payload }).then<InitialQueryResponse>(data => data.data)
+    initial: (payload: InitalQueryPayload) => axiosInstance.get("/queries/initial", { params: payload }).then<DbQueryList>(data => data.data)
   }
 };
 
@@ -45,9 +41,9 @@ const mockedEndpoints: typeof lifeEndpoints = {
     },
     async initial(payload: InitalQueryPayload) {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      return {} as any;
+      return { technology: "Snowflake", queries: [] };
     }
   }
 }
 
-export const endpoints = lifeEndpoints;
+export const endpoints = mockedEndpoints;

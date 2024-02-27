@@ -29,9 +29,10 @@ type SqlEditorProps = {
 
 export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, initialData, query }) => {
   const technology = initialData.data?.technology;
+  const initialQuery = initialData.data?.initialQuery;
   const [usedQuery, setUsedQuery] = useStateDomain<Query>(undefined, [query, technology, tables]);
   const generatedQuery = useQuery(api.getQuery, usedQuery, tables, technology);
-  const formattedGeneratedQuery = generatedQuery.data && utils.formatSqlQuery(generatedQuery.data);
+  const formattedGeneratedQuery = generatedQuery.data && utils.formatSqlQuery(generatedQuery.data, technology);
   const [editorQuery, setEditorQuery] = useStateDomain<string>(formattedGeneratedQuery, [formattedGeneratedQuery]);
   const [validatedQuery, setValidatedQuery] = useStateDomain<string>(undefined, [editorQuery]);
   const [explainedQuery, setExplainedQuery] = useStateDomain<string>(undefined, [editorQuery]);
@@ -42,7 +43,7 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, initia
   const isEmptyQuery = !editorQuery || editorQuery === "";
   const convertionResult = convertionRequest.data;
 
-  const setFormattedEditorQuery = (query: string) => setEditorQuery(utils.formatSqlQuery(query));
+  const setFormattedEditorQuery = (query: string) => setEditorQuery(utils.formatSqlQuery(query, technology));
 
   useEffect(() => {
     if (convertionResult) {
@@ -50,8 +51,14 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, initia
     }
   }, [convertionResult]);
 
+  useEffect(() => {
+    if (initialQuery) {
+      setFormattedEditorQuery(initialQuery);
+    }
+  }, [initialQuery]);
+
   return (
-    <Box padding={2} paddingLeft={0} display="flex" flexDirection="column" style={{ height: '100%', display: hidden ? 'none' : 'block' }}>
+    <Box style={{ height: '100%', display: hidden ? 'none' : 'block' }}>
       <Button disabled={!initialData.isSuccess} variant="contained" sx={{ height: 30, marginRight: 2 }} onClick={() => setUsedQuery(query)}>
         Generate query
       </Button>
@@ -59,7 +66,7 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, initia
       <Box
         height={20}
         marginTop={1}
-        marginBottom={1}
+        marginBottom={-2}
         marginRight={0.5}
         display="flex"
         alignItems="center"
@@ -71,7 +78,16 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, initia
           <SqlTooltip isLoading={convertionRequest.isLoading} disabled={isEmptyQuery} title={`Convert to ${technology} format`} onClick={() => setConvertedQuery(editorQuery)} icon={<LoopOutlinedIcon />} />
         </ButtonGroup>
       </Box>
-      <Box height={130}>
+      <Box display="flex" flexDirection="column" marginBottom={1}>
+        <Typography fontSize={15} fontWeight={550} marginTop={2}>
+          Query suggestions:
+        </Typography>
+        <Box>
+          {queryExamples.map(({ query }, i) =>
+            <QuerySuggestion key={i} query={query} onClick={setFormattedEditorQuery} technology={technology} />)}
+        </Box>
+      </Box>
+      <Box minHeight={140}>
         <QueryStatus
           status={validationRequest.status}
           message={validationRequest.data || "Query is Valid"}
@@ -82,15 +98,6 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, initia
           message={explanationRequest.data}
           severity="info"
         />
-      </Box>
-      <Box display="flex" flexDirection="column" marginTop={0.5}>
-        <Typography fontSize={15} fontWeight={550} marginTop={2}>
-          Query suggestions:
-        </Typography>
-        <Box>
-          {queryExamples.map(({ query }, i) =>
-            <QuerySuggestion key={i} query={query} onClick={setFormattedEditorQuery} technology={technology} />)}
-        </Box>
       </Box>
       <ActionButtons disabled={isEmptyQuery} onConfirm={() => editorQuery && window.hostFunctions?.onOk(editorQuery)} />
     </Box>

@@ -181,8 +181,8 @@ export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, 
   return (
     <Grid container style={{ height: '100%', display: hidden ? 'none' : 'block' }}>
       <Grid container spacing={2}>
-        <Grid item xs={9}>
-          <div style={{ height: 400, width: "100%" }}>
+        <Grid item xs={8}>
+          <Box style={{ height: 600, width: "100%" }}>
             <QueryBuilderContext.Provider
               value={{
                 nodes: nodes,
@@ -214,10 +214,10 @@ export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, 
                 edgeTypes={edgeTypes}
               />
             </QueryBuilderContext.Provider>
-          </div>
+          </Box>
         </Grid>
-        <Grid item xs={3}>
-          <Box height="100%" width="100%" className="vqb" bgcolor="white" boxShadow='0px 1px 2px 1px #0002'>
+        <Grid item xs={4}>
+          <Box bgcolor="white" boxShadow='0px 1px 2px 1px #0002'>
             <SchemaLister onTableAdd={onTableAdd} databases={databases} />
           </Box>
         </Grid>

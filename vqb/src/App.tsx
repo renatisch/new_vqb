@@ -17,13 +17,8 @@ const queryClient = new QueryClient({
   },
 });
 
-export const App: FC = () => {
-
-  return (
-    <div className="App">
-      <QueryClientProvider client={queryClient}>
-        <QueryBuilderDialog />
-      </QueryClientProvider>
-    </div>
-  );
-}
+export const App: FC = () => (
+  <QueryClientProvider client={queryClient}>
+    <QueryBuilderDialog />
+  </QueryClientProvider>
+);

@@ -7,6 +7,7 @@ export type QueryPayload = {
 export type InitialData = {
   technology: string;
   databases: string[];
+  initialQuery?: string;
 }
 
 export type InitalQueryPayload = {

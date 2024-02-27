@@ -1,10 +1,10 @@
 import { CiViewTable } from "react-icons/ci";
+import { GoPlusCircle } from "react-icons/go";
 
 import { component, useProp, useQuery } from "../../../framework";
 import { TableQuery } from "../../../types/types";
 import { api } from "../../../utils/api";
 import { SchemaListerTreeItem } from "../../stateless/TreeItem";
-import { PlusSquare } from "../../stateless/icons";
 import { DataTypeIcon } from "../../stateless/DataTypeIcon";
 
 type DbTableProps = {
@@ -30,7 +30,7 @@ export const TableNode = component<DbTableProps>(({ isExpanded, dbName, schemaNa
       nodeId={tableName}
       labelText={tableName}
       labelIcon={<CiViewTable />}
-      controlIcon={subNodes.data && <PlusSquare onClick={onTableAddHandler} />}
+      controlIcon={subNodes.data && <GoPlusCircle onClick={onTableAddHandler} />}
       isLoadingChildren={subNodes.isLoading}
     >
       {columns.map(({ name, dataType }) =>

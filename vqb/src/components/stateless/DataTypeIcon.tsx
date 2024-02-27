@@ -1,19 +1,26 @@
 import { MdAbc } from "react-icons/md";
-import { component } from "../../framework"
 import { GoNumber } from "react-icons/go";
+import { CiSquareCheck, CiViewList } from "react-icons/ci";
+
+import { component } from "../../framework"
+import { DataType } from "../../types/types";
 
 type DataTypeIconProps = {
-  dataType: string;
+  dataType: DataType;
 }
 
 export const DataTypeIcon = component<DataTypeIconProps>(({ dataType }) => {
+  if (dataType === "boolean") {
+    return <CiSquareCheck />;
+  }
+
   if (dataType === "string") {
-    return <MdAbc height={10} />
+    return <MdAbc />;
   }
 
   if (dataType === "integer") {
-    return <GoNumber height={10} />
+    return <GoNumber />;
   }
 
-  return <GoNumber height={10} />
+  return <CiViewList />;
 });

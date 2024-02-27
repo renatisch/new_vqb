@@ -1,6 +1,13 @@
 import { Dispatch, SetStateAction } from "react";
 import { Node, Edge } from "reactflow";
 
+export type DataType = "boolean" | "integer" | "string" | "unknown";
+
+export type InitialState = {
+  technology: string;
+  query: string;
+}
+
 export type DbQuery = {
   query_type: string;
   query: string;
@@ -13,15 +20,14 @@ export type DbQueryList = {
 
 export type Column = {
   id: string;
-  objectType: "column";
+  objectType: DataType;
   name: string;
-  dataType: "integer";
   selected: boolean;
 }
 
 export type ColumnQuery = {
   name: string;
-  dataType: "integer" | "string" | "unknown";
+  dataType: DataType;
 }
 
 export type TableQuery = {

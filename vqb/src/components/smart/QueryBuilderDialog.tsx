@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import Tabs from "@mui/material/Tabs";
@@ -27,33 +27,40 @@ export const QueryBuilderDialog = component(() => {
   });
 
   const initialData = useQuery(api.getInitialData);
+  const initialQuery = initialData.data?.initialQuery;
+
+  useEffect(() => {
+    if (initialQuery) {
+      setContent(1);
+    }
+  }, [initialQuery]);
 
   return (
-      <Paper sx={{ background: "#f5f8fc", height: 800, width: "100%", overflow: 'auto' }}>
-        <Grid container>
-          <Tabs value={content} onChange={(_, val) => setContent(val)} centered variant='fullWidth' style={{ width: '100%', background: '#e3eaf3' }}>
-            <Tab label="Visual Query Builder" />
-            <Tab label="SQL Editor" />
-          </Tabs>
-          <Grid item xs={12} padding={2}>
-            <VisualQueryBuilder
-              hidden={content !== 0}
-              editorQuery={editorQuery}
-              setEditorQuery={setEditorQuery}
-              query={query}
-              setQuery={setQuery}
-              tables={tables}
-              setTables={setTables}
-              initialData={initialData}
-            />
-            <SqlEditorView
-              hidden={content !== 1}
-              initialData={initialData}
-              query={query}
-              tables={tables}
-            />
-          </Grid>
+    <Paper style={{ background: "#f5f8fc", height: 720, width: "100%" }}>
+      <Grid container>
+        <Tabs value={content} onChange={(_, val) => setContent(val)} centered variant='fullWidth' style={{ width: '100%', background: '#e3eaf3' }}>
+          <Tab label="Visual Query Builder" />
+          <Tab label="SQL Editor" />
+        </Tabs>
+        <Grid item xs={12} padding={2}>
+          <VisualQueryBuilder
+            hidden={content !== 0}
+            editorQuery={editorQuery}
+            setEditorQuery={setEditorQuery}
+            query={query}
+            setQuery={setQuery}
+            tables={tables}
+            setTables={setTables}
+            initialData={initialData}
+          />
+          <SqlEditorView
+            hidden={content !== 1}
+            initialData={initialData}
+            query={query}
+            tables={tables}
+          />
         </Grid>
-      </Paper>
+      </Grid>
+    </Paper>
   );
 });

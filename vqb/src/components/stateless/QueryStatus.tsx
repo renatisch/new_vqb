@@ -16,7 +16,7 @@ export const QueryStatus = component<QueryStatusProps>(({ status, severity, mess
   }
 
   return (
-    <Box sx={{ marginBottom: 1 }}>
+    <Box sx={{ marginBottom: 1, boxShadow: '0px 2px 2px 0px #0002' }}>
       {
         status === 'success' ? !message ? null :
           <Alert severity={severity}>

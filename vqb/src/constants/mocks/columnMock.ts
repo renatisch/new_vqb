@@ -18,7 +18,7 @@ export const columnsMock: ColumnMock = [
         dataType: "string",
       },
       {
-        name: "product_category",
+        name: "product_category_abc_very",
         dataType: "string",
       },
       {

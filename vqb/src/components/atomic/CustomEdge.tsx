@@ -30,12 +30,12 @@ export const CustomEdge = component<CustomEdgeProps>(({ id, sourceX, sourceY, ta
       <BaseEdge id={id} path={edgePath} />
       <EdgeLabelRenderer>
         <FormControl
-          fullWidth
-          className="nodrag nopan z10"
+          size='small'
           sx={{
-            background: "white",
-            position: "absolute",
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            m: 1,
+            fontSize: 'small',
+            background: "#f9fcfe",
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px) scale(0.6)`,
             pointerEvents: "all",
             width: 100,
             zIndex: 10000,
@@ -45,12 +45,14 @@ export const CustomEdge = component<CustomEdgeProps>(({ id, sourceX, sourceY, ta
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
+            size='small'
             value={action}
+            margin={'none'}
             label="Action"
             onChange={handleChange}
           >
-            <MenuItem value="join">Join</MenuItem>
-            <MenuItem value="union">Union</MenuItem>
+            <MenuItem value="join" sx={{ fontSize: 'medium' }}>Join</MenuItem>
+            <MenuItem value="union" sx={{ fontSize: 'medium' }}>Union</MenuItem>
           </Select>
         </FormControl>
       </EdgeLabelRenderer>

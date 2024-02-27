@@ -1,8 +1,7 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { CiViewTable } from "react-icons/ci";
 import { Handle, Position } from "reactflow";
 import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
@@ -22,6 +21,8 @@ type DbNodeProps = {
 
 export const DbNode = component<DbNodeProps>(({ data }) => {
   const { query, setQuery, setTables, tables } = useContext(QueryBuilderContext);
+  const [expanded, setExpanded] = useState(true);
+
   const handleCheck = (tableName: string, column: string) => {
     if (data.handleType === "source") {
       setQuery({
@@ -61,44 +62,31 @@ export const DbNode = component<DbNodeProps>(({ data }) => {
   };
 
   return (
-    <>
-      <Card sx={{ maxWidth: 200 }}>
-        <Handle
-          id={data.handleType === "source" ? "a" : "b"}
-          type={data.handleType === "source" ? "source" : "target"}
-          position={
-            data.handleType === "source" ? Position.Right : Position.Left
-          }
-          isConnectable={true}
-        />
-        <Box height={8} bgcolor="#07c08d" />
-        <Accordion disableGutters expanded>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1d-content"
-            id="panel1d-header"
-          >
-            <Box display="flex" alignItems="center">
-              <CiViewTable />
-              <Typography marginLeft={1} fontSize={10}>
-                {data.tableName}
-              </Typography>
-            </Box>
-          </AccordionSummary>
-          <AccordionDetails sx={{ bgcolor: "#f8fafb" }}>
-            <Grid container>
-              <Grid item xs={12}>
-                <Box bgcolor="#f8fafb" paddingRight={2}>
-                  <Grid container>
-                    {data.columns.map((column: any, i) =>
-                      <TableView key={i} column={column} onClick={() => handleCheck(data.tableName, column.name)} />)}
-                  </Grid>
-                </Box>
-              </Grid>
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-      </Card>
-    </>
+    <Card>
+      <Handle
+        id={data.handleType === "source" ? "a" : "b"}
+        type={data.handleType === "source" ? "source" : "target"}
+        position={data.handleType === "source" ? Position.Right : Position.Left}
+        isConnectable
+      />
+      <Box height={8} bgcolor="#07c08d" />
+      <Accordion disableGutters expanded={expanded}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon onClick={() => setExpanded(!expanded)} />}
+          aria-controls="panel1d-content"
+          id="panel1d-header"
+          style={{ height: 24, minHeight: 24, padding: 6 }}
+        >
+          <CiViewTable />
+          <Typography marginLeft={1} fontSize={10}>
+            {data.tableName}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails sx={{ bgcolor: "#f8fafb", padding: 0.5, paddingRight: 1 }}>
+          {data.columns.map(column =>
+            <TableView key={column.id} column={column} onClick={() => handleCheck(data.tableName, column.name)} />)}
+        </AccordionDetails>
+      </Accordion>
+    </Card>
   );
 });

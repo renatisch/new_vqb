@@ -1,15 +1,20 @@
 import { columnsMock } from "../constants/mocks/columnMock";
 import { InitialData } from "../types/api";
-import { ColumnQuery, DbQueryList, Query, Table } from "../types/types";
+import { ColumnQuery, DbQueryList, InitialState, Query, Table } from "../types/types";
 import { endpoints } from "./endpoints";
 
 export const api = {
   async getInitialData(): Promise<InitialData> {
     let technology: string;
+    let initialQuery: string | undefined;
+    let initState: InitialState;
     if (window.hostFunctions) {
-      technology = await window.hostFunctions.getTechnology();
+      initState = await window.hostFunctions.getInitialState();
+      technology = initState.technology;
+      initialQuery = initState.query.trim().length === 0 ? initState.query : undefined;
     } else {
       technology = "Snowflake";
+      initialQuery = undefined;
     }
     const initialQueries = await endpoints.queries.initial({ technology });
     await window.hostFunctions?.setQueries(initialQueries);
@@ -19,7 +24,7 @@ export const api = {
     } else {
       databases = ["DB 1"];
     }
-    return { technology, databases };
+    return { technology, databases, initialQuery };
   },
 
   async setQueries(dbQueries: DbQueryList) {

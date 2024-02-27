@@ -19,11 +19,11 @@ export const QuerySuggestion = component<QuerySuggestionProps>(({ query, technol
     <div>
       {convertedQuery.isLoading ? <CircularProgress size={16} style={{ margin: 14 }} /> :
         convertedQuery.data &&
-        <Button style={{ maxWidth: '100%', padding: 0, marginLeft: -9 }} onClick={() => onClick(convertedQuery.data)}>
+        <Button style={{ maxWidth: '100%', padding: 0 }} onClick={() => onClick(convertedQuery.data)}>
           <SyntaxHighlighter
             language="sql"
             style={oneLight}
-            customStyle={{ display: 'inline-block', boxShadow: '0px 2px 2px 0px #0002', background: '#e3eaf3', fontSize: 13, margin: 10, padding: 4, cursor: 'pointer' }}
+            customStyle={{ display: 'inline-block', boxShadow: '0px 2px 2px 0px #0002', background: '#e9effa', fontSize: 13, margin: 4, padding: 4, cursor: 'pointer' }}
             codeTagProps={{ style: { background: '#e3eaf3', color: "black" } }}
           >
             {convertedQuery.data}
