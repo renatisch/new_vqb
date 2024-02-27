@@ -44,11 +44,11 @@ export const QueryBuilderDialog = component(() => {
               setQuery={setQuery}
               tables={tables}
               setTables={setTables}
-              databases={initialData.data?.databases}
+              initialData={initialData}
             />
             <SqlEditorView
               hidden={content !== 1}
-              technology={initialData.data?.technology}
+              initialData={initialData}
               query={query}
               tables={tables}
             />

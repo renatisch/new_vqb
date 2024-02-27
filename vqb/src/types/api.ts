@@ -4,6 +4,11 @@ export type QueryPayload = {
   query: string;
 }
 
+export type InitialData = {
+  technology: string;
+  databases: string[];
+}
+
 export type InitalQueryPayload = {
   technology: string;
 }

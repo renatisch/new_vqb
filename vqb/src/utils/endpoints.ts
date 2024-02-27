@@ -5,7 +5,23 @@ import { explainMock } from "../constants/mocks/explainMock";
 import { InitalQueryPayload, QueryObject, QueryPayload, ValidateApiResponse } from "../types/api";
 import { axiosInstance } from "../logic";
 
-const mockedEndpoints = {
+type InitialQueryResponse = {
+  technology: string;
+  queries: QueryObject[];
+}
+
+const lifeEndpoints = {
+  queries: {
+    join: (payload: any) => axiosInstance.post<any>("/queries/join", payload).then<QueryObject>(data => data.data),
+    select: (payload: any) => axiosInstance.post("/queries/select", payload).then(data => data.data),
+    validate: (payload: QueryPayload) => axiosInstance.post("/queries/validate", payload).then(data => data.data),
+    explain: (payload: QueryPayload) => axiosInstance.post("/queries/explain", payload).then(data => data.data),
+    convert: (payload: QueryPayload) => axiosInstance.post("/queries/convert", payload).then(data => data.data),
+    initial: (payload: InitalQueryPayload) => axiosInstance.get("/queries/initial", { params: payload }).then<InitialQueryResponse>(data => data.data)
+  }
+};
+
+const mockedEndpoints: typeof lifeEndpoints = {
   queries: {
     async join(payload: any) {
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -25,7 +41,7 @@ const mockedEndpoints = {
     },
     async convert(payload: QueryPayload) {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      return { query: "string" };
+      return { query: "SELECT * FROM alteryx.staff.product_department JOIN alteryx.staff.offices ON location = location WHERE alteryx.staff.product_department.location = 'Prague';" };
     },
     async initial(payload: InitalQueryPayload) {
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -33,21 +49,5 @@ const mockedEndpoints = {
     }
   }
 }
-
-type InitialQueryResponse = {
-  technology: string;
-  queries: QueryObject[];
-}
-
-const lifeEndpoints = {
-  queries: {
-    join: (payload: any) => axiosInstance.post<any>("/queries/join", payload).then<QueryObject>(data => data.data),
-    select: (payload: any) => axiosInstance.post("/queries/select", payload).then(data => data.data),
-    validate: (payload: QueryPayload) => axiosInstance.post("/queries/validate", payload).then(data => data.data),
-    explain: (payload: QueryPayload) => axiosInstance.post("/queries/explain", payload).then(data => data.data),
-    convert: (payload: QueryPayload) => axiosInstance.post("/queries/convert", payload).then(data => data.data),
-    initial: (payload: InitalQueryPayload) => axiosInstance.get("/queries/initial", { params: payload }).then<InitialQueryResponse>(data => data.data)
-  }
-};
 
 export const endpoints = lifeEndpoints;

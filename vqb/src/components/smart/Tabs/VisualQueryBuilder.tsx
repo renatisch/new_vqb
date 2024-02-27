@@ -2,9 +2,11 @@ import { Dispatch, SetStateAction, useState, useEffect, useCallback } from "reac
 import ReactFlow, { applyEdgeChanges, applyNodeChanges, OnNodesChange, OnEdgesChange, Node, Edge, addEdge, getIncomers, getConnectedEdges, getOutgoers, NodeTypes, FitViewOptions, DefaultEdgeOptions } from "reactflow";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import { UseQueryResult } from "react-query";
 
 import { component } from "../../../framework";
 import { Table, Query, TableQuery } from "../../../types/types";
+import { InitialData } from "../../../types/api";
 import { QueryBuilderContext } from "../../../contexts/queryBuilderContext";
 import { DbNode } from "../../atomic/DbNode";
 import { CustomEdge } from "../../atomic/CustomEdge";
@@ -31,6 +33,7 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
 const styles = {
   background: "white",
   height: "100%",
+  boxShadow: '0px 1px 2px 1px #0002'
 };
 
 type VisualQueryBuilderProps = {
@@ -41,13 +44,14 @@ type VisualQueryBuilderProps = {
   tables: Table[];
   setTables: Dispatch<SetStateAction<Table[]>>;
   hidden: boolean;
-  databases: string[] | undefined;
+  initialData: UseQueryResult<InitialData>;
 };
 
-export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, editorQuery, setEditorQuery, query, setQuery, tables, setTables, databases }) => {
+export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, editorQuery, setEditorQuery, query, setQuery, tables, setTables, initialData }) => {
   const [action, setAction] = useState("");
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
+  const databases = initialData.data?.databases;
 
   const onTableAdd = (tableQuery: TableQuery) => {
     setTables([...tables, {
@@ -213,7 +217,7 @@ export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, 
           </div>
         </Grid>
         <Grid item xs={3}>
-          <Box height="100%" width="100%" className="vqb" bgcolor="white">
+          <Box height="100%" width="100%" className="vqb" bgcolor="white" boxShadow='0px 1px 2px 1px #0002'>
             <SchemaLister onTableAdd={onTableAdd} databases={databases} />
           </Box>
         </Grid>

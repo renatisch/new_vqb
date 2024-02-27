@@ -7,6 +7,6 @@ export const queryExamples = [
   },
   {
     query:
-      "SELECT * FROM alteryx.staff.product_department JOIN alteryx.staff.offices ON location = location WHERE alteryx.staff.product_department.location = 'Prague';",
+      "SELECT * FROM alteryx.staff.product_department JOIN alteryx.staff.offices ON location = location\nWHERE alteryx.staff.product_department.location = 'Prague';",
   },
 ];

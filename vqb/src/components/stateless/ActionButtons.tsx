@@ -5,9 +5,10 @@ import { component } from "../../framework";
 
 type ActionButtonsProps = {
   onConfirm?: () => void;
+  disabled?: boolean;
 }
 
-export const ActionButtons = component<ActionButtonsProps>(({ onConfirm }) => {
+export const ActionButtons = component<ActionButtonsProps>(({ onConfirm, disabled }) => {
   return (
     <Box
       marginTop={1}
@@ -21,10 +22,10 @@ export const ActionButtons = component<ActionButtonsProps>(({ onConfirm }) => {
           variant="contained"
           sx={{ width: 100, height: 30, marginLeft: 2 }}
           onClick={onConfirm}
+          disabled={disabled}
         >
           Ok
-        </Button>
-      }
+        </Button>}
       <Button
         variant="outlined"
         sx={{ width: 100, height: 30, marginLeft: 2, textTransform: "none" }}

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { UseQueryResult } from "react-query";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import WbIncandescentOutlinedIcon from "@mui/icons-material/WbIncandescentOutlined";
 import LoopOutlinedIcon from "@mui/icons-material/LoopOutlined";
@@ -9,6 +10,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 
 import { component, useQuery, useStateDomain } from "../../../framework";
 import { Query, Table } from "../../../types/types";
+import { InitialData } from "../../../types/api";
 import { queryExamples } from "../../../constants/querySamples";
 import { api } from "../../../utils/api";
 import { utils } from "../../../utils/utils";
@@ -22,10 +24,11 @@ type SqlEditorProps = {
   hidden?: boolean;
   query: Query;
   tables: Table[];
-  technology?: string;
+  initialData: UseQueryResult<InitialData>;
 };
 
-export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, technology, query }) => {
+export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, initialData, query }) => {
+  const technology = initialData.data?.technology;
   const [usedQuery, setUsedQuery] = useStateDomain<Query>(undefined, [query, technology, tables]);
   const generatedQuery = useQuery(api.getQuery, usedQuery, tables, technology);
   const formattedGeneratedQuery = generatedQuery.data && utils.formatSqlQuery(generatedQuery.data);
@@ -49,10 +52,10 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, techno
 
   return (
     <Box padding={2} paddingLeft={0} display="flex" flexDirection="column" style={{ height: '100%', display: hidden ? 'none' : 'block' }}>
-      <Button variant="contained" sx={{ height: 30, marginRight: 2 }} onClick={() => setUsedQuery(query)}>
+      <Button disabled={!initialData.isSuccess} variant="contained" sx={{ height: 30, marginRight: 2 }} onClick={() => setUsedQuery(query)}>
         Generate query
       </Button>
-      <SqlEditor query={editorQuery} queryLoading={generatedQuery.isLoading} setQuery={setFormattedEditorQuery} />
+      <SqlEditor query={editorQuery} queryLoading={generatedQuery.isLoading} setQuery={setEditorQuery} />
       <Box
         height={20}
         marginTop={1}
@@ -86,10 +89,10 @@ export const SqlEditorView = component<SqlEditorProps>(({ hidden, tables, techno
         </Typography>
         <Box>
           {queryExamples.map(({ query }, i) =>
-            <QuerySuggestion key={i} query={query} onClick={() => setFormattedEditorQuery(query)} />)}
+            <QuerySuggestion key={i} query={query} onClick={setFormattedEditorQuery} technology={technology} />)}
         </Box>
       </Box>
-      <ActionButtons onConfirm={!isEmptyQuery ? () => window.hostFunctions?.onOk(editorQuery) : undefined} />
+      <ActionButtons disabled={isEmptyQuery} onConfirm={() => editorQuery && window.hostFunctions?.onOk(editorQuery)} />
     </Box>
   );
 });

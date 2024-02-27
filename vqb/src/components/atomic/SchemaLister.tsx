@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import { TreeView } from "@mui/x-tree-view/TreeView";
-import { CircularProgress } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { component } from "../../framework";
 import { TableQuery } from "../../types/types";
@@ -24,7 +24,7 @@ export const SchemaLister = component<SchemaListerProps>(({ onTableAdd, database
 
   return (
     <Box sx={{ minHeight: 270, flexGrow: 1, maxWidth: 500, padding: 1 }}>
-      <TreeView aria-label="customized" defaultCollapseIcon={<MinusSquare />} defaultExpandIcon={<PlusSquare />} onNodeToggle={handleToggle}>
+      <TreeView style={{ padding: 0 }} aria-label="customized" defaultCollapseIcon={<MinusSquare />} defaultExpandIcon={<PlusSquare />} onNodeToggle={handleToggle}>
         {databases?.map(db =>
           <DbNode key={db} dbName={db} isExpanded={expanded.includes(db)} onTableAdd={onTableAdd} />
         )}

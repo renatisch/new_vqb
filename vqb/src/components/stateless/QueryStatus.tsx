@@ -23,7 +23,7 @@ export const QueryStatus = component<QueryStatusProps>(({ status, severity, mess
             <Typography marginLeft={1}>{message}</Typography>
           </Alert> :
           status === 'error' ?
-            <Alert severity={severity}>
+            <Alert severity='error'>
               <Typography marginLeft={1}>{'HTTP request failed'}</Typography>
             </Alert> : ""
       }

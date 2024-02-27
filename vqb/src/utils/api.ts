@@ -1,11 +1,7 @@
 import { columnsMock } from "../constants/mocks/columnMock";
+import { InitialData } from "../types/api";
 import { ColumnQuery, DbQueryList, Query, Table } from "../types/types";
 import { endpoints } from "./endpoints";
-
-type InitialData = {
-  technology: string;
-  databases: string[];
-}
 
 export const api = {
   async getInitialData(): Promise<InitialData> {
