@@ -21,7 +21,7 @@ export const QueryStatus = component<QueryStatusProps>(({ status, severity, mess
       {
         status === 'loading' ?
           <CircularProgress size={21} sx={{ padding: 1.7, marginLeft: 0.6 }} /> :
-          status === 'success' ?
+          status === 'success' ? !message ? null :
             <Alert severity={severity}>
               <Typography marginLeft={1}>{message}</Typography>
             </Alert> :

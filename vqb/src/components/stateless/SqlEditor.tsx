@@ -20,7 +20,7 @@ export const SqlEditor = component<SqlEditorProps>(({ queryLoading, query, setQu
       {queryLoading ? <LoaderOverlay /> : <Box height={"30px"}></Box>}
       <CodeMirror
         value={query}
-        height="300px"
+        height="200px"
         extensions={extensions}
         onChange={setQuery}
         basicSetup={{

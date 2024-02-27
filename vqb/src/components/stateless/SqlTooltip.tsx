@@ -13,9 +13,11 @@ type SqlTooltipProps = {
 
 export const SqlTooltip = component<SqlTooltipProps>(({ title, icon, onClick, disabled }) => {
   if (disabled) {
-    <IconButton sx={{ marginRight: 0 }} disabled>
-      {icon}
-    </IconButton>
+    return (
+      <IconButton sx={{ marginRight: 0 }} disabled>
+        {icon}
+      </IconButton>
+    );
   }
 
   return (

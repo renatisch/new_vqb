@@ -10,6 +10,7 @@ import { DbNode } from "../../atomic/DbNode";
 import { CustomEdge } from "../../atomic/CustomEdge";
 import { SchemaLister } from "../../atomic/SchemaLister";
 import { TechnologySelector } from "../../atomic/TechnologySelector";
+import { ActionButtons } from "../../stateless/ActionButtons";
 
 import "reactflow/dist/style.css";
 
@@ -40,12 +41,10 @@ type VisualQueryBuilderProps = {
   setQuery: Dispatch<SetStateAction<Query>>;
   tables: Table[];
   setTables: Dispatch<SetStateAction<Table[]>>;
-  technology: string;
-  setTechnology: Dispatch<SetStateAction<string>>;
   hidden: boolean;
 };
 
-export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, editorQuery, setEditorQuery, query, setQuery, tables, setTables, technology, setTechnology }) => {
+export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, editorQuery, setEditorQuery, query, setQuery, tables, setTables }) => {
   const [action, setAction] = useState("");
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -176,31 +175,26 @@ export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, 
   );
 
   return (
-    <QueryBuilderContext.Provider
-      value={{
-        nodes: nodes,
-        setNodes: setNodes,
-        edges: edges,
-        setEdges: setEdges,
-        action,
-        setAction,
-        tables: tables,
-        setTables: setTables,
-        query: query,
-        setQuery: setQuery,
-        editorQuery: editorQuery,
-        setEditorQuery: setEditorQuery,
-      }}
-    >
-      <Grid container style={{ display: hidden ? 'none' : 'block' }}>
-        <Grid item xs={12}>
-          <Box marginY={1}>
-            <TechnologySelector technology={technology} setTechnology={setTechnology} />
-          </Box>
-        </Grid>
-        <Grid container spacing={2}>
-          <Grid item xs={9}>
-            <div style={{ height: 600, width: "100%" }}>
+    <Grid container style={{ height: '100%', display: hidden ? 'none' : 'block' }}>
+      <Grid container spacing={2}>
+        <Grid item xs={9}>
+          <div style={{ height: 400, width: "100%" }}>
+            <QueryBuilderContext.Provider
+              value={{
+                nodes: nodes,
+                setNodes: setNodes,
+                edges: edges,
+                setEdges: setEdges,
+                action,
+                setAction,
+                tables: tables,
+                setTables: setTables,
+                query: query,
+                setQuery: setQuery,
+                editorQuery: editorQuery,
+                setEditorQuery: setEditorQuery,
+              }}
+            >
               <ReactFlow
                 style={styles}
                 nodes={nodes}
@@ -215,15 +209,16 @@ export const VisualQueryBuilder = component<VisualQueryBuilderProps>(({ hidden, 
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
               />
-            </div>
-          </Grid>
-          <Grid item xs={3}>
-            <Box height="100%" width="100%" className="vqb" bgcolor="white">
-              <SchemaLister onTableAdd={onTableAdd} />
-            </Box>
-          </Grid>
+            </QueryBuilderContext.Provider>
+          </div>
+        </Grid>
+        <Grid item xs={3}>
+          <Box height="100%" width="100%" className="vqb" bgcolor="white">
+            <SchemaLister onTableAdd={onTableAdd} />
+          </Box>
         </Grid>
       </Grid>
-    </QueryBuilderContext.Provider>
+      <ActionButtons />
+    </Grid>
   );
 });

@@ -1,23 +1,60 @@
-import { ColumnQuery, Query, Table } from "../types/types";
+import { ColumnQuery, DbQueryList, Query, Table } from "../types/types";
 import { endpoints } from "./endpoints";
 
 export const api = {
-  async getDbList() {
+  async setQueries(dbQueries: DbQueryList) {
+    if (window.hostFunctions) {
+      return await window.hostFunctions.setQueries(dbQueries);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  },
+  async getDbList(): Promise<string[]> {
+    if (window.hostFunctions) {
+      return window.hostFunctions.getDbList();
+    }
+
     await new Promise(resolve => setTimeout(resolve, 1000));
     return ["DB 1", "DB 2"];
   },
 
-  async getSchemaList(dbName: string) {
+  async getSchemaList(dbName: string): Promise<string[]> {
+    if (window.hostFunctions) {
+      return window.hostFunctions.getSchemas(dbName);
+    }
+
     await new Promise(resolve => setTimeout(resolve, 1000));
     return ["renats_schema"];
   },
 
-  async getTableList(dbName: string, schemaName: string) {
+  async getTableList(dbName: string, schemaName: string): Promise<string[]> {
+    if (window.hostFunctions) {
+      return window.hostFunctions.getTables(dbName, schemaName);
+    }
+
     await new Promise(resolve => setTimeout(resolve, 1000));
     return ["Orders", "Payments"];
   },
 
+  async getInitialQueries(technology: string) {
+    const initialQueries = await endpoints.queries.initial({ technology });
+    await window.hostFunctions?.setQueries(initialQueries);
+    return initialQueries;
+  },
+
+  async getTechnology() {
+    if (window.hostFunctions) {
+      return window.hostFunctions.getTechnology();
+    }
+
+    return "Snowflake";
+  },
+
   async getColumnList(dbName: string, schemaName: string, tableName: string): Promise<ColumnQuery[]> {
+    if (window.hostFunctions) {
+      return window.hostFunctions.getColumns(dbName, schemaName, tableName);
+    }
+
     await new Promise(resolve => setTimeout(resolve, 1000));
     if (tableName === "Orders") {
       return [
@@ -118,5 +155,15 @@ export const api = {
   async explainQuery(technology: string, query: string): Promise<string> {
     const explanation = await endpoints.queries.explain({ technology, query });
     return explanation.query_description;
+  },
+
+  /**
+   * @param technology Technlogy type
+   * @param query SQL Query
+   * @returns Query converted to given technology
+   */
+  async convertQuery(technology: string, query: string): Promise<string> {
+    const convertion = await endpoints.queries.convert({ technology, query });
+    return convertion.query;
   }
 }

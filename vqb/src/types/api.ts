@@ -4,13 +4,20 @@ export type QueryPayload = {
   query: string;
 }
 
-
+export type InitalQueryPayload = {
+  technology: string;
+}
 
 // Responses
 export type ValidateApiResponse = {
   is_query_valid: 'valid';
   description: string;
 };
+
+export type QueryObject = {
+  query_type: string;
+  query: string;
+}
 
 export type ExplainApiResponse = {
   query_description: 'string';

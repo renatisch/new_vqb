@@ -1,8 +1,7 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 import { QueryBuilderDialog } from "./components/smart/QueryBuilderDialog";
-import { getDbStructureMock } from "./types/designerApi";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,12 +18,6 @@ const queryClient = new QueryClient({
 });
 
 export const App: FC = () => {
-  useEffect(() => {
-    if (!window.hostFunctions || !window.hostFunctions.getDBStructure) {
-      window.hostFunctions = {
-        getDBStructure: getDbStructureMock,
-      }
-  }}, []);
 
   return (
     <div className="App">

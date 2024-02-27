@@ -1,6 +1,16 @@
 import { Dispatch, SetStateAction } from "react";
 import { Node, Edge } from "reactflow";
 
+export type DbQuery = {
+  query_type: string;
+  query: string;
+}
+
+export type DbQueryList = {
+  technology: string;
+  queries: DbQuery[];
+}
+
 export type Column = {
   id: string;
   objectType: "column";
