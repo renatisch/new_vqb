@@ -46,4 +46,4 @@ const mockedEndpoints: typeof lifeEndpoints = {
   }
 }
 
-export const endpoints = mockedEndpoints;
+export const endpoints = lifeEndpoints;
