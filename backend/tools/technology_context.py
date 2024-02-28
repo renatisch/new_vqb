@@ -1,8 +1,8 @@
 technologies = {
     "Databricks": {
         "instructions": """Databricks:\n
-                        Database: a grouping of schemas. It is a parent of schema objects.\n
-                        Schema: a grouping of objects in a database. It is a parent of tables.\n
+                        Catalog: a grouping of schemas. It is a parent of schema objects.\n
+                        Schema: a grouping of objects in a catalog. It is a parent of tables.\n
                         Table: a collection of rows and columns stored as data.\n""",
         "schema": "database_id.schema_id.table_id",
         "examples": """
@@ -11,7 +11,7 @@ technologies = {
         "inputs": [
             {
                 "object": "database",
-                "input": "Generate a SQL query to list databases in my {technology} account.",
+                "input": "Generate a SQL query to list catalogs in my {technology} account.",
             },
             {
                 "object": "schema",

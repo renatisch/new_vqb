@@ -8,7 +8,7 @@ from typing import List
 SQLQuery = ResponseSchema(name="query", description="sql query.")
 QueryType = ResponseSchema(
     name="query_type",
-    description="SQL query type. One of the following values: list_databases, list_schemas, list_tables, describe_table, select, join",
+    description="SQL query type. One of the following values: list_databases,list_catalogs, list_schemas, list_tables, describe_table, select, join",
 )
 Queries = ResponseSchema(name="queries", description="List of generated sql queries")
 IsQueryValid = ResponseSchema(

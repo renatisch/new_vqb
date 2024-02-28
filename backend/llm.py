@@ -12,7 +12,7 @@ from tools.list_objects_tool import list_objects_tool
 from tools.get_object_tool import get_object_tool
 from tools.describe_query_tool import describe_query_tool
 from tools.select_query_tool import select_query_tool
-from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.pydantic_v1 import BaseModel, Field, validator
 from typing import List
 from langchain.output_parsers.pydantic import PydanticOutputParser
 from enum import Enum
@@ -29,6 +29,14 @@ class QueryType(str, Enum):
 class LlmResponseQuery(BaseModel):
     query_type: QueryType = Field(description="Requested query type.")
     query: str = Field(description="SQL query.")
+
+    # added validator to handle Databricks specific db structure: no list_database, but list_catalogs query.
+    @validator("query_type", pre=True)
+    def _flexible_city(cls, value):
+        if value == "list_databases" or value == "list_catalogs":
+            return "list_databases"
+        else:
+            return value
 
 
 class Queries(BaseModel):
