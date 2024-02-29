@@ -16,7 +16,7 @@ IsQueryValid = ResponseSchema(
 )
 Description = ResponseSchema(
     name="description",
-    description="One sentence description of the reason query is valid or invalid.",
+    description="Two sentence description of the reason query is valid or invalid.",
 )
 
 Query_Description = ResponseSchema(

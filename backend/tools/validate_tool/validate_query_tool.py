@@ -1,15 +1,12 @@
 from langchain.prompts import PromptTemplate
 from langchain.output_parsers import StructuredOutputParser
 from handlers.handlers import ChatModelStartHandler
-from langchain.tools import StructuredTool
-from langchain_openai import OpenAI
-from tools.technology_context import technologies
 from models import IsQueryValid, Description
 from tools.validate_tool.technology_context import instructions
 from langchain_openai import ChatOpenAI
 
 
-def experiemental_query_validate(technology: str, query: str):
+def query_validate(technology: str, query: str):
     technology = technology.value
     user_input = f"""Validate if the following sql query conforms with {technology} SQL dialect.\n
                     SQL query to validate: {query}

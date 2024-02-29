@@ -4,10 +4,10 @@ from llm import initial_queries_assistant
 from api_models import Payload, Technology, DBs, Query_to_Validate
 from tools.select_query_tool import select_query
 from tools.explain_query_tool import query_explain
-from tools.validate_query_tool import query_validate
+from tools.validate_tool.validate_query_tool import query_validate
 from tools.left_join_query_tool import left_join_query
 from tools.convert_query_tool import query_convert
-from tools.list_objects_tool import list_objects
+from tools.experimental.validate_query_tool import experiemental_query_validate
 from fastapi.middleware.cors import CORSMiddleware
 import json
 
@@ -101,6 +101,14 @@ def explain_query(query: Query_to_Validate):
 @app.post("/queries/convert")
 def convert_query(query: Query_to_Validate):
     response = query_convert(technology=query.technology, query=query.query)
+    return response
+
+
+@app.post("/experimental/validate")
+def validate_query(query: Query_to_Validate):
+    response = experiemental_query_validate(
+        technology=query.technology, query=query.query
+    )
     return response
 
 
